@@ -2,13 +2,11 @@
   <div class="container mx-auto flex justify-between items-center p-4 h-full">
     <!-- Left Group: Logo and Search -->
     <div class="flex items-center space-x-2 h-full">
-      <img src="assets/logo.png" alt="logo" class="w-20 h-20"> <!-- Increased the size of the logo -->
+      <img src="assets/logo.png" alt="logo" class="w-20 h-20">
       <div class="relative hidden md:block">
-        <input type="text" placeholder="Search"
+        <input type="text" placeholder="Search movies, cinemas..."
           class="pl-12 pr-4 py-2 bg-gray-200 text-gray-700 rounded-3xl focus:outline-none focus:ring-2 focus:ring-gray-700">
-        <!-- Removed border, changed bg color, added padding -->
         <span class="absolute inset-y-0 left-2 flex items-center text-gray-400">
-          <!-- Centered the search icon vertically using flex -->
           <span class="material-symbols-outlined cursor-pointer">
             search
           </span>
@@ -21,34 +19,30 @@
       </a>
     </div>
 
-    <!-- Middle Group: Centered Tabs -->
+    <!-- Middle Group: Main Navigation -->
     <nav class="hidden md:flex space-x-4 flex-grow justify-center">
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Dashboard</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Games</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Store</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Forums</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Team</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Support</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Contact Us</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Movies</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Cinemas</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Now Showing</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Coming Soon</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">My Bookings</div>
     </nav>
 
-    <!-- Right Group: User Profile and Menu Toggle -->
+    <!-- Right Group: City Selection and User Profile -->
     <div class="flex items-center space-x-4">
+      <!-- City Selector -->
+      <div class="hidden md:flex items-center space-x-1 text-gray-600 cursor-pointer">
+        <span class="material-symbols-outlined">location_on</span>
+        <span>Select City</span>
+      </div>
+
       <button class="md:hidden text-gray-600" (click)="toggleMenu()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-        </svg>
+        <span class="material-symbols-outlined">menu</span>
       </button>
 
+      <!-- User Section -->
       <a href="#" class="text-gray-600 hover:text-gray-900">
-        <span class="material-symbols-outlined">
-          widgets
-        </span>
-      </a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">
-        <span class="material-symbols-outlined">
-          notifications_unread
-        </span>
+        <span class="material-symbols-outlined">notifications</span>
       </a>
       <a href="#" class="text-gray-600 hover:text-gray-900">
         <span class="material-symbols-outlined">account_circle</span>
@@ -60,18 +54,17 @@
   <div class="absolute top-full left-0 w-full bg-white z-50 p-4 md:hidden"
     [ngClass]="{'block': menuOpen, 'hidden': !menuOpen}" [@flyInOut]>
     <nav class="flex flex-col space-y-2">
-      <a href="#" class="text-gray-600 hover:text-gray-900">Dashboard</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Games</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Store</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Forums</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Team</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Support</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Contact Us</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Movies</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Cinemas</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Now Showing</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Coming Soon</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">My Bookings</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Select City</a>
     </nav>
   </div>
 </header>
 
 <!-- News Section -->
 <div id="news" class="bg-white text-center justify-center w-3/5 mx-auto overflow-auto">
-  <p class="p-4">new feature coming soon on 01.06.2024</p>
+  <p class="p-4">Book your movie tickets hassle-free!</p>
 </div>

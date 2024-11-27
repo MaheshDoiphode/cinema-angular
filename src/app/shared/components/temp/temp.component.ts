@@ -9,10 +9,4 @@ import { Component } from '@angular/core';
   styleUrl: './temp.component.css'
 })
 export class TempComponent {
-
-  showFullDescription = false;
-
-  toggleDescription() {
-    this.showFullDescription = !this.showFullDescription;
-  }
 }

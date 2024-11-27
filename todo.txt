@@ -1,0 +1,24 @@
+
+- angular-components for frontend
+  1. Authentication Module
+     - Login/Register forms
+     - User profile management
+
+  2. Admin Dashboard
+     - Cinema management interface
+     - Hall/seat management
+     - Movie management
+     - Projection scheduling
+
+  3. User Interface
+     - Movie catalog browser
+     - Booking system
+     - Seat selection interface
+     - Payment gateway integration
+     - Order history viewer
+
+  4. Shared Components
+     - Navigation
+     - Movie cards
+     - Schedule display
+     - Seat map visualization

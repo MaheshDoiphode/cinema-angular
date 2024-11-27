@@ -1,0 +1,1747 @@
+openapi: 3.0.0
+info:
+  title: Cinema Management API - Endpoints
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8084
+    description: Local development server
+
+paths:
+  ## Auth
+  /auth/login:
+    post:
+      summary: User Login
+      tags: [Authentication]
+      security: []  # Public endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: userPassword
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwtToken:
+                    type: string
+                    example: eyJhbGciOiJIUzUxMiJ9...
+                  username:
+                    type: string
+                    example: user@example.com
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Credentials Invalid !!
+
+  /auth/create-user:
+    post:
+      summary: Create New User
+      tags: [Authentication]
+      security: []  # Public endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: newuser@example.com
+                password_hash:
+                  type: string
+                  example: password123
+                name:
+                  type: string
+                  example: New User
+                role:
+                  type: string
+                  enum: [USER, ADMIN, CINEMA_OWNER]
+                  example: USER
+                profile_pic:
+                  type: string
+                  format: base64
+                  nullable: true
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  role:
+                    type: string
+                  profile_pic:
+                    type: string
+                    nullable: true
+
+  /auth/update-password:
+    post:
+      summary: Update Password
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Password updated successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/update-password-without-old:
+    post:
+      summary: Update Password Without Old Password
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Password updated successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  ## Categorie
+  /api/categorie:
+    get:
+      summary: List All Categories
+      tags: [Categories]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Action"
+
+    post:
+      summary: Create New Category
+      tags: [Categories]
+      security:
+        - BearerAuth: []
+      description: Create a new movie category (ADMIN only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Horror"
+      responses:
+        '200':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 5
+                  name:
+                    type: string
+                    example: "Horror"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+
+  /api/categorie/{id}:
+    get:
+      summary: Get Category by ID
+      tags: [Categories]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Category details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Action"
+        '404':
+          description: Category not found
+
+    put:
+      summary: Update Category
+      tags: [Categories]
+      security:
+        - BearerAuth: []
+      description: Update an existing category (ADMIN only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Sci-Fi"
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Sci-Fi"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+        '404':
+          description: Category not found
+
+    delete:
+      summary: Delete Category
+      tags: [Categories]
+      security:
+        - BearerAuth: []
+      description: Delete a category (ADMIN only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Category deleted successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Deleted the Category Successfully"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+        '404':
+          description: Category not found
+  ## Cinema
+  /api/cinema:
+    get:
+      summary: List All Cinemas
+      tags: [Cinema]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of cinemas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CinemaDto'
+
+  /api/cinema/{id}:
+    get:
+      summary: Get Cinema by ID
+      tags: [Cinema]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cinema details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CinemaDto'
+        '404':
+          description: Cinema not found
+
+  /api/cinema/register:
+    post:
+      summary: Register New Cinema
+      tags: [Cinema]
+      security:
+        - BearerAuth: []
+      description: Register a new cinema (CINEMA_OWNER only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CinemaDto'
+      responses:
+        '200':
+          description: Cinema registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CinemaDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+
+  /api/cinema/update/{id}:
+    put:
+      summary: Update Cinema
+      tags: [Cinema]
+      security:
+        - BearerAuth: []
+      description: Update cinema details (CINEMA_OWNER only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CinemaDto'
+      responses:
+        '200':
+          description: Cinema updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CinemaDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+        '404':
+          description: Cinema not found
+
+  /api/cinema/owner/{ownerEmail}:
+    get:
+      summary: Get Cinemas by Owner
+      tags: [Cinema]
+      security:
+        - BearerAuth: []
+      description: Get cinemas by owner email (CINEMA_OWNER & ADMIN only)
+      parameters:
+        - name: ownerEmail
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of cinemas owned by user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CinemaDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER or ADMIN role required)
+
+  /api/cinema/{id}/verify:
+    post:
+      summary: Verify Cinema Registration
+      tags: [Cinema]
+      security:
+        - BearerAuth: []
+      description: Verify a cinema registration (ADMIN only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cinema verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CinemaDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+        '404':
+          description: Cinema not found
+
+  /api/cinema/{id}/salles:
+    get:
+      summary: Get Cinema Salles
+      tags: [Cinema]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of salles in cinema
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SalleDto'
+        '404':
+          description: Cinema not found
+  ## Film
+  /api/film:
+    get:
+      summary: List All Films
+      tags: [Films]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of all films
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FilmDto'
+
+    post:
+      summary: Create New Film
+      tags: [Films]
+      security:
+        - BearerAuth: []
+      description: Create a new film (ADMIN only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmDto'
+      responses:
+        '201':
+          description: Film created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilmDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+
+  /api/film/{id}:
+    get:
+      summary: Get Film by ID
+      tags: [Films]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Film details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilmDto'
+        '404':
+          description: Film not found
+
+    put:
+      summary: Update Film
+      tags: [Films]
+      security:
+        - BearerAuth: []
+      description: Update film details (ADMIN only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmDto'
+      responses:
+        '200':
+          description: Film updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilmDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+        '404':
+          description: Film not found
+
+    delete:
+      summary: Delete Film
+      tags: [Films]
+      security:
+        - BearerAuth: []
+      description: Delete a film (ADMIN only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Film deleted successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Film deleted successfully"
+
+  /api/film/category/{categoryId}:
+    get:
+      summary: Get Films by Category
+      tags: [Films]
+      security: []  # Public endpoint
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of films in category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FilmDto'
+
+  /api/film/category/{villeId}/{categoryId}:
+    get:
+      summary: Get Films by Ville and Category
+      tags: [Films]
+      security: []  # Public endpoint
+      parameters:
+        - name: villeId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of films in city and category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FilmDto'
+
+  /api/film/upcoming:
+    get:
+      summary: Get Upcoming Films
+      tags: [Films]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of upcoming films
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FilmDto'
+
+  /api/film/nowshowing:
+    get:
+      summary: Get Now Showing Films
+      tags: [Films]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of currently showing films
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FilmDto'
+  ## Payment
+  /api/payment/process:
+    post:
+      summary: Process Payment
+      tags: [Payments]
+      security:
+        - BearerAuth: []
+      description: Process a new payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentDto'
+      responses:
+        '201':
+          description: Payment processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/payment/{id}:
+    get:
+      summary: Get Payment Details
+      tags: [Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Payment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Not authorized to view this payment
+
+  /api/payment/verify:
+    post:
+      summary: Verify Payment Status
+      tags: [Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment status
+          content:
+            application/json:
+              schema:
+                type: string
+                enum: [PENDING, COMPLETED, REFUND_REQUESTED, REFUNDED, REFUND_REJECTED]
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Not authorized to verify this payment
+
+  /api/payment/refund/request/{paymentId}:
+    post:
+      summary: Request Refund
+      tags: [Payments]
+      security:
+        - BearerAuth: []
+      description: Request a refund for a payment
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Refund requested successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Not authorized to request refund
+
+  /api/payment/refund/{paymentId}/process:
+    post:
+      summary: Process Refund Request
+      tags: [Payments]
+      security:
+        - BearerAuth: []
+      description: Process a refund request (CINEMA_OWNER only)
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: approved
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Refund processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+
+  ## Place
+  /api/place/salle/{salleId}:
+    get:
+      summary: Get Places by Salle
+      tags: [Places]
+      security: []  # Public endpoint
+      parameters:
+        - name: salleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of places in salle
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceDto'
+        '404':
+          description: Salle not found
+
+  /api/place/configure:
+    post:
+      summary: Configure Places in Salle
+      tags: [Places]
+      security:
+        - BearerAuth: []
+      description: Configure seat layout for a salle (CINEMA_OWNER only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceConfigurationDto'
+      responses:
+        '200':
+          description: Places configured successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceConfigurationResponseDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+        '404':
+          description: Salle not found
+
+  ## Projection
+  /api/projection:
+    get:
+      summary: List All Projections
+      tags: [Projections]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of all projections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDto'
+
+    post:
+      summary: Create New Projection
+      tags: [Projections]
+      security:
+        - BearerAuth: []
+      description: Create a new projection (CINEMA_OWNER only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectionDto'
+      responses:
+        '200':
+          description: Projection created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectionDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+
+  /api/projection/{id}:
+    get:
+      summary: Get Projection by ID
+      tags: [Projections]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Projection details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectionDto'
+        '404':
+          description: Projection not found
+
+    put:
+      summary: Update Projection
+      tags: [Projections]
+      security:
+        - BearerAuth: []
+      description: Update projection details (CINEMA_OWNER only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectionDto'
+      responses:
+        '200':
+          description: Projection updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectionDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+
+    delete:
+      summary: Delete Projection
+      tags: [Projections]
+      security:
+        - BearerAuth: []
+      description: Delete a projection (CINEMA_OWNER only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Projection deleted successfully
+
+  /api/projection/film/{filmId}:
+    get:
+      summary: Get Projections by Film
+      tags: [Projections]
+      security: []  # Public endpoint
+      parameters:
+        - name: filmId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of projections for a film
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDto'
+
+  /api/projection/cinema/{cinemaId}:
+    get:
+      summary: Get Projections by Cinema
+      tags: [Projections]
+      security: []  # Public endpoint
+      parameters:
+        - name: cinemaId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of projections in a cinema
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDto'
+
+  /api/projection/date/{date}:
+    get:
+      summary: Get Projections by Date
+      tags: [Projections]
+      security: []  # Public endpoint
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of projections on a date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDto'
+
+  /api/projection/{projectionId}/places:
+    get:
+      summary: Get Available Places for Projection
+      tags: [Projections]
+      security: []  # Public endpoint
+      parameters:
+        - name: projectionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of available places for projection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceDto'
+
+  ## Salle
+  /api/salle/{id}:
+    get:
+      summary: Get Salle by ID
+      tags: [Salles]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Salle details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalleDto'
+        '404':
+          description: Salle not found
+
+  /api/salle:
+    post:
+      summary: Create New Salle
+      tags: [Salles]
+      security:
+        - BearerAuth: []
+      description: Create a new salle (CINEMA_OWNER only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalleDto'
+      responses:
+        '201':
+          description: Salle created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalleDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+
+  /api/salle/{id}:
+    put:
+      summary: Update Salle
+      tags: [Salles]
+      security:
+        - BearerAuth: []
+      description: Update salle details (CINEMA_OWNER only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalleDto'
+      responses:
+        '200':
+          description: Salle updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalleDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+        '404':
+          description: Salle not found
+
+    delete:
+      summary: Delete Salle
+      tags: [Salles]
+      security:
+        - BearerAuth: []
+      description: Delete a salle (CINEMA_OWNER only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Salle deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+        '404':
+          description: Salle not found
+
+  /api/salle/{id}/places:
+    get:
+      summary: Get Places in Salle
+      tags: [Salles]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of places in salle
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceDto'
+        '404':
+          description: Salle not found
+
+  ## Ticket
+  /api/ticket:
+    get:
+      summary: List All Tickets
+      tags: [Tickets]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketDto'
+
+    post:
+      summary: Create New Ticket
+      tags: [Tickets]
+      security: []  # Public endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketDto'
+      responses:
+        '200':
+          description: Ticket created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDto'
+
+  /api/ticket/{id}:
+    get:
+      summary: Get Ticket by ID
+      tags: [Tickets]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ticket details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDto'
+        '404':
+          description: Ticket not found
+
+    delete:
+      summary: Delete Ticket
+      tags: [Tickets]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ticket deleted successfully
+
+  /api/ticket/place/{placeId}:
+    delete:
+      summary: Delete Tickets by Place
+      tags: [Tickets]
+      security:
+        - BearerAuth: []
+      description: Delete all tickets for a specific place (CINEMA_OWNER only)
+      parameters:
+        - name: placeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tickets deleted successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Successfully Deleted the tickets for the place"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (CINEMA_OWNER role required)
+
+  /api/ticket/user/{userEmail}:
+    get:
+      summary: Get User's Tickets
+      tags: [Tickets]
+      security: []  # Public endpoint
+      parameters:
+        - name: userEmail
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of user's tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketDto'
+
+  /api/ticket/projection/{projectionId}:
+    get:
+      summary: Get Tickets by Projection
+      tags: [Tickets]
+      security: []  # Public endpoint
+      parameters:
+        - name: projectionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of tickets for projection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketDto'
+
+  /api/ticket/book:
+    post:
+      summary: Book Ticket
+      tags: [Tickets]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketBookingRequest'
+      responses:
+        '200':
+          description: Ticket booked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  ## User
+  /api/user/profile:
+    get:
+      summary: Get User Profile
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+      responses:
+        '200':
+          description: User profile details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Email mismatch with token
+
+    put:
+      summary: Update User Profile
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Email mismatch with token
+
+  /api/user/test:
+    get:
+      summary: Test API Status
+      tags: [Users]
+      responses:
+        '200':
+          description: API working status
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: working
+
+  ## Ville
+  /api/ville:
+    get:
+      summary: List All Cities
+      tags: [Cities]
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: List of all cities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VilleDto'
+
+    post:
+      summary: Create New City
+      tags: [Cities]
+      security:
+        - BearerAuth: []
+      description: Create a new city (ADMIN only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VilleDto'
+      responses:
+        '201':
+          description: City created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VilleDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+
+  /api/ville/{id}:
+    get:
+      summary: Get City by ID
+      tags: [Cities]
+      security: []  # Public endpoint
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: City details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VilleDto'
+        '404':
+          description: City not found
+
+    put:
+      summary: Update City
+      tags: [Cities]
+      security:
+        - BearerAuth: []
+      description: Update city details (ADMIN only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VilleDto'
+      responses:
+        '200':
+          description: City updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VilleDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+        '404':
+          description: City not found
+
+    delete:
+      summary: Delete City
+      tags: [Cities]
+      security:
+        - BearerAuth: []
+      description: Delete a city (ADMIN only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: City deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Access denied (ADMIN role required)
+        '404':
+          description: City not found
+
+
+components:
+  schemas:
+    VilleDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        altitude:
+          type: number
+          format: double
+    UserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [USER, ADMIN, CINEMA_OWNER]
+        profile_pic:
+          type: string
+          format: base64
+          nullable: true
+    EmailRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+    TicketDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        nomClient:
+          type: string
+        prix:
+          type: number
+          format: double
+        codePayement:
+          type: integer
+        reservee:
+          type: boolean
+        userEmail:
+          type: string
+        placeId:
+          type: integer
+        projectionFilmId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        seatNumber:
+          type: integer
+        rowNumber:
+          type: integer
+        columnNumber:
+          type: integer
+        salleName:
+          type: string
+        cinemaName:
+          type: string
+        filmTitle:
+          type: string
+        projectionDate:
+          type: string
+          format: date
+        seanceTime:
+          type: string
+          format: date-time
+    TicketBookingRequest:
+      type: object
+      properties:
+        projectionId:
+          type: integer
+        placeId:
+          type: integer
+        nomClient:
+          type: string
+    SalleDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        nombrePlaces:
+          type: integer
+        cinemaId:
+          type: integer
+        configuredPlaces:
+          type: integer
+    ProjectionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        dateProjection:
+          type: string
+          format: date
+        prix:
+          type: number
+          format: double
+        filmId:
+          type: integer
+        salleId:
+          type: integer
+        seanceId:
+          type: integer
+    PlaceDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        numero:
+          type: integer
+        rowNumber:
+          type: integer
+        columnNumber:
+          type: integer
+        salleId:
+          type: integer
+    PlaceConfigurationDto:
+      type: object
+      properties:
+        salleId:
+          type: integer
+        totalRows:
+          type: integer
+        totalColumns:
+          type: integer
+    PlaceConfigurationResponseDto:
+      type: object
+      properties:
+        salleId:
+          type: integer
+        totalRows:
+          type: integer
+        totalColumns:
+          type: integer
+        places:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceDto'
+        message:
+          type: string
+    PaymentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        amount:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: [PENDING, COMPLETED, REFUND_REQUESTED, REFUNDED, REFUND_REJECTED]
+        transactionId:
+          type: string
+        userEmail:
+          type: string
+        ticketId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FilmDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        titre:
+          type: string
+        duree:
+          type: number
+          format: double
+        realisateur:
+          type: string
+        description:
+          type: string
+        photo:
+          type: string
+        dateSortie:
+          type: string
+          format: date
+        categorieId:
+          type: integer
+    CinemaDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        altitude:
+          type: number
+          format: double
+        nombreSalles:
+          type: integer
+        villeId:
+          type: integer
+        ownerEmail:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, VERIFIED]
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Unauthorized access
+
