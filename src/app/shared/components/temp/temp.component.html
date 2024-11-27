@@ -1,0 +1,178 @@
+<div class="bg-gray-50 text-black min-h-screen p-4">
+    <div class="video">
+        <div class="lg:flex">
+            <!-- video stream -->
+            <div id="stream" class="md:h-128 w-full">
+                <img src="assets/cat2.jpg" alt="VRBoy" class="rounded-3xl w-full h-full" />
+                <div class="">
+                    <div class="flex-1">
+                        <div class="text-xl font-bold m-2">Pico 4 VR real experience: the next dust-eating device</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="flex items-center justify-between md:justify-start">
+                            <div class="profile flex items-center">
+                                <img src="assets/cat2.jpg" alt="Profile" class="w-12 h-12 rounded-full ml-2" />
+                                <div class="block">
+                                    <div class="text-lg font-bold ml-2">&#64;VRBoy</div>
+                                    <div class="ml-2 text-sm">3.2M Followers</div>
+                                </div>
+                                <button type="button"
+                                    class="text-white ml-2 bg-black hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-3xl text-md px-5 py-2.5 text-center me-2 mb-2">Follow</button>
+
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <span class="material-symbols-outlined ml-4 cursor-pointer text-4xl">
+                                thumb_up
+                            </span>
+                            <span class="material-symbols-outlined ml-4 cursor-pointer text-4xl">
+                                thumb_down
+                            </span>
+                            <span class="material-symbols-outlined ml-4 cursor-pointer text-4xl">
+                                share
+                            </span>
+                            <span class="material-symbols-outlined ml-4 text-4xl ">
+                                steppers
+                            </span>
+                            <span class="hidden material-symbols-outlined ml-4 text-4xl ">
+                                flag
+                            </span>
+                            <span class="hidden material-symbols-outlined ml-4 text-4xl">
+                                bug_report
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Description Section -->
+                    <div id="description" class="w-full mx-auto p-4 mt-4 bg-gray-200 rounded-lg">
+                        <div [ngClass]="{ 'line-clamp-2': !showFullDescription }">
+                            <p>Welcome to our gaming stream! In this video, we're diving into the action of [Game
+                                Title].
+                                Join us as we explore new levels, strategies, and more!</p>
+                        </div>
+
+                        <button (click)="toggleDescription()" class="mt-2 text-blue-500 hover:underline">
+                            {{ showFullDescription ? 'See Less' : 'Show More' }}
+                        </button>
+
+                        <div *ngIf="showFullDescription">
+                            <h3 class="mt-6 text-xl font-semibold">Links:</h3>
+                            <ul class="list-disc list-inside mt-2">
+                                <li><a href="https://www.youtube.com/" class="text-blue-500 hover:underline">Subscribe
+                                        to our channel</a></li>
+                                <li><a href="https://www.example.com/" class="text-blue-500 hover:underline">Visit our
+                                        merchandise store</a></li>
+                                <li><a href="https://www.instagram.com/" class="text-blue-500 hover:underline">Follow us
+                                        on Instagram</a></li>
+                                <li><a href="https://www.twitter.com/" class="text-blue-500 hover:underline">Follow us
+                                        on Twitter</a></li>
+                                <li><a href="https://www.facebook.com/" class="text-blue-500 hover:underline">Like us on
+                                        Facebook</a></li>
+                            </ul>
+
+                            <h3 class="mt-6 text-xl font-semibold">Support Us:</h3>
+                            <ul class="list-disc list-inside mt-2">
+                                <li><a href="https://www.patreon.com/" class="text-blue-500 hover:underline">Support us
+                                        on Patreon</a></li>
+                                <li><a href="https://www.paypal.com/" class="text-blue-500 hover:underline">Donate via
+                                        PayPal</a></li>
+                            </ul>
+
+                            <h3 class="mt-6 text-xl font-semibold">Join the Community:</h3>
+                            <p class="mt-2">Join our Discord server for more discussions and gaming sessions: <a
+                                    href="https://www.discord.com/" class="text-blue-500 hover:underline">Join
+                                    Discord</a></p>
+
+                            <p class="mt-4">Thanks for watching and happy gaming!</p>
+                            <button (click)="toggleDescription()" class="mt-2 text-blue-500 hover:underline">
+                                {{ showFullDescription ? 'See Less' : 'Show More' }}
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <!-- Comments Section -->
+                    <div id="comments" class="">
+                        <div class="p-4 w-full">
+                            <div class=" p-4 max-h-96 overflow-y-auto">
+                                <div class="flex flex-col space-y-4">
+                                    <div class="flex items-start space-x-2">
+                                        <img src="assets/cat2.jpg" alt="User" class="w-10 h-10 rounded-full" />
+                                        <div>
+                                            <div class="text-sm font-semibold">hello Qiu</div>
+                                            <div class="text-xs text-black">2 days ago</div>
+                                            <div class="mt-1">I just bought it today and suddenly I want to return
+                                                it.</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <img src="assets/cat2.jpg" alt="User" class="w-10 h-10 rounded-full" />
+                                        <div>
+                                            <div class="text-sm font-semibold">John</div>
+                                            <div class="text-xs text-black">9:24 am</div>
+                                            <div class="mt-1">Nitpicking. For many ordinary users, this may be their
+                                                first
+                                                VR device. The shock it brings to users cannot be expressed in
+                                                words. There
+                                                is no way to compare it with professional digital bloggers like you,
+                                                but
+                                                from now on from an ordinary person’s perspective, this is a highly
+                                                recommended product.</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <img src="assets/cat2.jpg" alt="User" class="w-10 h-10 rounded-full" />
+                                        <div>
+                                            <div class="text-sm font-semibold">Sophie</div>
+                                            <div class="text-xs text-black">9:24 am</div>
+                                            <div class="mt-1">There's no way out of this thing if you don't get some
+                                                little
+                                                butter.</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Live chat -->
+            <div id="livechat" class="hidden lg:flex lg:w-1/2 m-4 lg:h-auto">
+                <div class="bg-gray-200 rounded-3xl p-4 max-h-96 overflow-y-auto">
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex items-start space-x-2">
+                            <img src="assets/cat2.jpg" alt="User" class="w-10 h-10 rounded-full" />
+                            <div>
+                                <div class="text-sm font-semibold">Brother Qiu</div>
+                                <div class="text-xs text-black">2 days ago</div>
+                                <div class="mt-1">I just bought it today and suddenly I want to return it.</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <img src="assets/cat2.jpg" alt="User" class="w-10 h-10 rounded-full" />
+                            <div>
+                                <div class="text-sm font-semibold">John</div>
+                                <div class="text-xs text-black">9:24 am</div>
+                                <div class="mt-1">Nitpicking. For many ordinary users, this may be their first
+                                    VR device. The shock it brings to users cannot be expressed in words. There
+                                    is no way to compare it with professional digital bloggers like you, but
+                                    from now on from an ordinary person’s perspective, this is a highly
+                                    recommended product.</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <img src="assets/cat2.jpg" alt="User" class="w-10 h-10 rounded-full" />
+                            <div>
+                                <div class="text-sm font-semibold">Sophie</div>
+                                <div class="text-xs text-black">9:24 am</div>
+                                <div class="mt-1">There's no way out of this thing if you don't get some little
+                                    butter.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>

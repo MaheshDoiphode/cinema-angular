@@ -1,0 +1,77 @@
+<header class="bg-gray-100 shadow sticky top-0 z-50 bg-opacity-95 w-full h-16">
+  <div class="container mx-auto flex justify-between items-center p-4 h-full">
+    <!-- Left Group: Logo and Search -->
+    <div class="flex items-center space-x-2 h-full">
+      <img src="assets/logo.png" alt="logo" class="w-20 h-20"> <!-- Increased the size of the logo -->
+      <div class="relative hidden md:block">
+        <input type="text" placeholder="Search"
+          class="pl-12 pr-4 py-2 bg-gray-200 text-gray-700 rounded-3xl focus:outline-none focus:ring-2 focus:ring-gray-700">
+        <!-- Removed border, changed bg color, added padding -->
+        <span class="absolute inset-y-0 left-2 flex items-center text-gray-400">
+          <!-- Centered the search icon vertically using flex -->
+          <span class="material-symbols-outlined cursor-pointer">
+            search
+          </span>
+        </span>
+      </div>
+      <a href="#" class="text-gray-600 hover:text-gray-900 cursor-pointer md:hidden">
+        <span class="material-symbols-outlined">
+          search
+        </span>
+      </a>
+    </div>
+
+    <!-- Middle Group: Centered Tabs -->
+    <nav class="hidden md:flex space-x-4 flex-grow justify-center">
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Dashboard</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Games</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Store</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Forums</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Team</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Support</div>
+      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Contact Us</div>
+    </nav>
+
+    <!-- Right Group: User Profile and Menu Toggle -->
+    <div class="flex items-center space-x-4">
+      <button class="md:hidden text-gray-600" (click)="toggleMenu()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+
+      <a href="#" class="text-gray-600 hover:text-gray-900">
+        <span class="material-symbols-outlined">
+          widgets
+        </span>
+      </a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">
+        <span class="material-symbols-outlined">
+          notifications_unread
+        </span>
+      </a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">
+        <span class="material-symbols-outlined">account_circle</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="absolute top-full left-0 w-full bg-white z-50 p-4 md:hidden"
+    [ngClass]="{'block': menuOpen, 'hidden': !menuOpen}" [@flyInOut]>
+    <nav class="flex flex-col space-y-2">
+      <a href="#" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Games</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Store</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Forums</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Team</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Support</a>
+      <a href="#" class="text-gray-600 hover:text-gray-900">Contact Us</a>
+    </nav>
+  </div>
+</header>
+
+<!-- News Section -->
+<div id="news" class="bg-white text-center justify-center w-3/5 mx-auto overflow-auto">
+  <p class="p-4">new feature coming soon on 01.06.2024</p>
+</div>

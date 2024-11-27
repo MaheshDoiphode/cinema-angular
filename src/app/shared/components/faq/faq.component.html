@@ -1,0 +1,20 @@
+<div id="accordion-example" class="m-2 bg-gray-50">
+    <div *ngFor="let item of accordionItems">
+        <h2 [id]="item.id">
+            <button type="button"
+                class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                aria-expanded="false" [attr.aria-controls]="item.id + '-body'">
+                <span>{{ item.heading }}</span>
+                <span class="material-symbols-outlined accordion-icon">keyboard_arrow_down</span>
+            </button>
+        </h2>
+        <div [id]="item.id + '-body'" class="hidden" [attr.aria-labelledby]="item.id">
+            <div class="p-5 border border-b-0 border-gray-200 ">
+                <p class="mb-2 text-gray-500 dark:text-gray-400">{{ item.bodyText }}</p>
+                <p class="text-gray-500 dark:text-gray-400" *ngFor="let link of item.links">
+                    <!-- <a [href]="link.url" class="text-blue-600 dark:text-blue-500 hover:underline">{{ link.text }}</a> -->
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

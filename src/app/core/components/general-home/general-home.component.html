@@ -1,0 +1,28 @@
+<app-header />
+<div class="h-full w-full">
+    <div class="grid grid-cols-5 rounded-3xl">
+        <div class="col-span-1">
+            <!-- Left Sidebar Content -->
+            <div class="bg-gray-200 h-screen">
+                <!-- Content for Left Sidebar -->
+                <p>Left Sidebar</p>
+            </div>
+        </div>
+        <div class="col-span-3">
+            <!-- Middle Content -->
+            <div class="bg-gray-300 h-screen p-4">
+                <!-- Content for Middle Section -->
+                <app-discord [server]="server" [channel]="channel" [useHtmlEmbed]="true" />
+            </div>
+        </div>
+        <div class="col-span-1">
+            <!-- Right Sidebar Content -->
+            <div class="bg-gray-200 h-screen">
+                <!-- Content for Right Sidebar -->
+                <p>Right Sidebar</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer />
