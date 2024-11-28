@@ -1,4 +1,4 @@
-We are creating a Book my show application here.
+We are creating a Book my show application here for web app - which is adaptable to screens due to the heavy use of tailwind css.
 We want to create a web and mobile application to manage cinemas. Each cinema, located in a city, is defined by its code, name, and geographical position. A cinema contains a set of halls. Each hall, defined by its number and name, contains a set of seats. Each seat has a number and is geographically positioned.
 
 Daily, several movie screenings are scheduled in the halls. Each screening takes place during a session, concerns a specific movie, and occurs in a hall at a specific screening date and a fixed price. Each session is defined by its number and start time. For each screening, a set of tickets is provided. Each ticket corresponds to a seat and is defined by the customer's name, the ticket price, and the payment code. Movies are categorized by genres.

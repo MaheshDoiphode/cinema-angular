@@ -1,24 +1,134 @@
+[note - '+' = done, '-' = pending]
 
-- angular-components for frontend
-  1. Authentication Module
-     - Login/Register forms
-     - User profile management
+authentication:
+  public:
+    - login:
+        path: /auth/login
+        components:
+          - login-form
+          - error-display
+    - register:
+        path: /auth/register
+        components:
+          - registration-form
+          - terms-conditions
+    - forgot-password:
+        path: /auth/forgot-password
+        components:
+          - email-input
+          - reset-instructions
+  protected:
+    - profile:
+        path: /auth/profile
+        components:
+          - user-info
+          - update-form
+          - profile-picture
 
-  2. Admin Dashboard
-     - Cinema management interface
-     - Hall/seat management
-     - Movie management
-     - Projection scheduling
+admin:
+  dashboard:
+    - main:
+        path: /admin
+        components:
+          - stats-overview
+          - quick-actions
+          - recent-activities
+    - cinema-management:
+        path: /admin/cinemas
+        components:
+          - cinema-list
+          - cinema-form
+          - verification-panel
+    - movie-management:
+        path: /admin/movies
+        components:
+          - movie-list
+          - movie-form
+          - category-manager
+    - user-management:
+        path: /admin/users
+        components:
+          - user-list
+          - role-manager
+          - access-control
 
-  3. User Interface
-     - Movie catalog browser
-     - Booking system
-     - Seat selection interface
-     - Payment gateway integration
-     - Order history viewer
+cinema-owner:
+  dashboard:
+    - main:
+        path: /owner
+        components:
+          - cinema-overview
+          - performance-metrics
+    - hall-management:
+        path: /owner/halls
+        components:
+          - hall-list
+          - hall-configuration
+          - seat-layout-editor
+    - screening-management:
+        path: /owner/screenings
+        components:
+          - schedule-calendar
+          - projection-form
+          - pricing-manager
 
-  4. Shared Components
-     - Navigation
-     - Movie cards
-     - Schedule display
-     - Seat map visualization
+user:
+  public:
+    - home:
+        path: /
+        components:
+          - featured-movies
+          - cinema-locations
+          - search-filters
+    - movie-catalog:
+        path: /movies
+        components:
+          - movie-grid
+          - filter-sidebar
+          - search-bar
+    - movie-details:
+        path: /movies/:id
+        components:
+          - movie-info
+          - screening-schedule
+          - cinema-selector
+  protected:
+    - booking:
+        path: /booking
+        components:
+          - seat-selector
+          - price-summary
+          - payment-form
+    - tickets:
+        path: /tickets
+        components:
+          - ticket-list
+          - booking-history
+          - refund-requests
+
+shared:
+  components:
+    - navigation:
+        components:
+          - top-navbar
+          - side-menu
+          - user-menu
+    - movie-components:
+        components:
+          - movie-card
+          - movie-grid
+          - movie-filter
+    - booking-components:
+        components:
+          - seat-map
+          - schedule-display
+          - payment-form
+    - utils:
+        components:
+          - loading-spinner
+          - error-alert
+          - success-toast
+          - confirmation-modal
+    + faq
+    + footer
+    + header
