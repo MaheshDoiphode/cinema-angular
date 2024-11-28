@@ -48,11 +48,11 @@
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             [class.border-red-500]="password.invalid && (password.dirty || password.touched)"
                             #password="ngModel"
-                            minlength="6">
+                            minlength="4">
                     </div>
                     <div *ngIf="password.invalid && (password.dirty || password.touched)" class="mt-1 text-sm text-red-600">
                         <div *ngIf="password.errors?.['required']">Password is required</div>
-                        <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters</div>
+                        <div *ngIf="password.errors?.['minlength']">Password must be at least 4 characters</div>
                     </div>
                 </div>
 

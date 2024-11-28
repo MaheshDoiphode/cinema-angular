@@ -1,1 +1,116 @@
-<p>register works!</p>
+<div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <!-- Logo -->
+        <img src="assets/cinema.png" alt="Cinema Logo" class="mx-auto h-16 w-auto">
+        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+            Create your account
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            Or
+            <a href="/auth/login" class="font-medium text-blue-600 hover:text-blue-500">
+                sign in to your account
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <!-- Error Alert -->
+            <div *ngIf="errorMessage" class="mb-4 flex p-4 text-sm text-red-800 rounded-lg bg-red-50">
+                <span class="material-symbols-outlined mr-2">error</span>
+                <span>{{ errorMessage }}</span>
+            </div>
+
+            <form class="space-y-6" (ngSubmit)="onSubmit()" #registerForm="ngForm">
+                <!-- Name Input -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <div class="mt-1">
+                        <input id="name" name="name" type="text" required
+                            [(ngModel)]="userData.name"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            [class.border-red-500]="name.invalid && (name.dirty || name.touched)"
+                            #name="ngModel"
+                            minlength="2">
+                    </div>
+                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="mt-1 text-sm text-red-600">
+                        <div *ngIf="name.errors?.['required']">Name is required</div>
+                        <div *ngIf="name.errors?.['minlength']">Name must be at least 2 characters</div>
+                    </div>
+                </div>
+
+                <!-- Email Input -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <div class="mt-1">
+                        <input id="email" name="email" type="email" required
+                            [(ngModel)]="userData.email"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            [class.border-red-500]="email.invalid && (email.dirty || email.touched)"
+                            #email="ngModel"
+                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                    </div>
+                    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="mt-1 text-sm text-red-600">
+                        <div *ngIf="email.errors?.['required']">Email is required</div>
+                        <div *ngIf="email.errors?.['pattern']">Please enter a valid email</div>
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="mt-1">
+                        <input id="password" name="password" type="password" required
+                            [(ngModel)]="userData.password_hash"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            [class.border-red-500]="password.invalid && (password.dirty || password.touched)"
+                            #password="ngModel"
+                            minlength="4">
+                    </div>
+                    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="mt-1 text-sm text-red-600">
+                        <div *ngIf="password.errors?.['required']">Password is required</div>
+                        <div *ngIf="password.errors?.['minlength']">Password must be at least 4 characters</div>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div>
+                    <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <div class="mt-1">
+                        <input id="confirm-password" name="confirm-password" type="password" required
+                            [(ngModel)]="confirmPassword"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            [class.border-red-500]="confirmPwd.invalid && (confirmPwd.dirty || confirmPwd.touched)"
+                            #confirmPwd="ngModel"
+                            minlength="4">
+                    </div>
+                    <div *ngIf="confirmPwd.invalid && (confirmPwd.dirty || confirmPwd.touched)" class="mt-1 text-sm text-red-600">
+                        <div *ngIf="confirmPwd.errors?.['required']">Please confirm your password</div>
+                        <div *ngIf="confirmPwd.errors?.['minlength']">Password must be at least 4 characters</div>
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="flex items-center">
+                    <input id="terms" name="terms" type="checkbox"
+                        [(ngModel)]="termsAccepted"
+                        class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="terms" class="ml-2 block text-sm text-gray-900">
+                        I agree to the 
+                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Terms and Conditions</a>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                        [disabled]="registerForm.invalid || loading || !termsAccepted"
+                        class="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50">
+                        <span *ngIf="loading" class="material-symbols-outlined animate-spin mr-2">refresh</span>
+                        Create Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

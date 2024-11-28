@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JwtRequest } from '../../shared/models/auth.model';
 import { AuthService } from '../auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { AuthService } from '../auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   loginData: JwtRequest = {
     email: '',
     password: ''
@@ -20,6 +21,7 @@ export class LoginComponent {
   rememberMe: boolean = false;
   errorMessage: string = '';
   loading: boolean = false;
+  private loginSubscription?: Subscription;
 
   constructor(
     private router: Router,
@@ -32,20 +34,28 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    try {
-      // Call your auth service login method here
-      // const response = await this.authService.login(this.loginData).toPromise();
-      // this.authService.setToken(response.jwtToken);
-      
-      // For now, just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirect to home page after successful login
-      this.router.navigate(['/']);
-    } catch (error: any) {
-      this.errorMessage = error.message || 'An error occurred during login';
-    } finally {
-      this.loading = false;
+    this.loginSubscription = this.authService.login(this.loginData)
+      .subscribe({
+        next: (response) => {
+          this.authService.setToken(response.jwtToken);
+          if (this.rememberMe) {
+            // Implement remember me functionality if needed
+          }
+          this.router.navigate(['/']);
+        },
+        error: (error) => {
+          this.errorMessage = error.error?.message || 'An error occurred during login';
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    if (this.loginSubscription) {
+      this.loginSubscription.unsubscribe();
     }
   }
 }
