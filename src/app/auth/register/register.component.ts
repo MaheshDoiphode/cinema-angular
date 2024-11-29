@@ -21,21 +21,46 @@ export class RegisterComponent implements OnDestroy {
     role: 'USER',
     profile_pic: undefined
   };
-  
+
   confirmPassword: string = '';
   errorMessage: string = '';
   loading: boolean = false;
   termsAccepted: boolean = false;
+  success: boolean = false;
+  successMessage: string = '';
   private registerSubscription?: Subscription;
+  previewImage: string | null = null;
 
   constructor(
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
+
+  onFileChange(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      if (file.size > 5242880) {
+        this.errorMessage = 'File size should not exceed 5MB';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewImage = e.target.result;
+        this.userData.profile_pic = e.target.result.split(',')[1];
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage() {
+    this.previewImage = null;
+    this.userData.profile_pic = undefined;
+  }
 
   async onSubmit() {
     if (this.loading) return;
-    
+
     if (!this.termsAccepted) {
       this.errorMessage = 'Please accept the terms and conditions';
       return;
@@ -45,21 +70,21 @@ export class RegisterComponent implements OnDestroy {
       this.errorMessage = 'Passwords do not match';
       return;
     }
-    
+
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     this.registerSubscription = this.authService.register(this.userData)
       .subscribe({
         next: (response) => {
-          // Optionally store some user info
-          this.router.navigate(['/auth/login']);
-        },
-        error: (error) => {
-          this.errorMessage = error.error?.message || 'An error occurred during registration';
+          this.success = true;
+          this.successMessage = 'You are a registered customer now.';
           this.loading = false;
         },
-        complete: () => {
+        error: (error) => {
+          this.success = false;
+          this.errorMessage = error.error || error.message || 'An error occurred during Registration';
           this.loading = false;
         }
       });

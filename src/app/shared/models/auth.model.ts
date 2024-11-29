@@ -6,6 +6,7 @@ export interface JwtRequest {
   export interface JwtResponse {
     jwtToken: string;
     username: string;
+    role: string;
   }
   
   export interface PasswordUpdateRequest {

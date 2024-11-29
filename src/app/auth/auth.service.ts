@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
 import { JwtRequest, JwtResponse } from '../shared/models/auth.model';
 import { environment } from '../shared/utils/environments/environment';
 import {User} from '../shared/models/user.model';
@@ -10,6 +10,8 @@ import {PasswordUpdateRequest} from '../shared/models/auth.model';
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'jwt_token';
+  private readonly CITY_KEY = 'selected_city_id';
+  private readonly USER_TYPE = 'user_type';
   private readonly API_URL = `${environment.apiUrl}/auth`;
   
   constructor(private http: HttpClient) {}
@@ -43,8 +45,30 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  getUserType(): string | null {
+    return localStorage.getItem(this.USER_TYPE);
+  }
+  setUserType(userType: string) {
+    localStorage.setItem(this.USER_TYPE, userType);
+  }
+
+  setCityId(id: number) {
+    localStorage.setItem(this.CITY_KEY, id.toString());
+  }
+
+  getCityId(): number | null {
+    const id = localStorage.getItem(this.CITY_KEY);
+    return id ? parseInt(id) : null;
+  }
+
+  removeCityId() {
+    localStorage.removeItem(this.CITY_KEY);
+  }
+
   removeToken() {
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_TYPE);
+    localStorage.removeItem(this.CITY_KEY);
   }
 
   isLoggedIn(): boolean {

@@ -2,17 +2,17 @@
 
 authentication:
   public:
-    - login:
+    + login:
         path: /auth/login
         components:
           - login-form
           - error-display
-    - register:
+    + register:
         path: /auth/register
         components:
           - registration-form
           - terms-conditions
-    - forgot-password:
+    + forgot-password:
         path: /auth/forgot-password
         components:
           - email-input
@@ -123,12 +123,16 @@ shared:
           - seat-map
           - schedule-display
           - payment-form
+    + choose-city:
+        components:
+          + city-selector
     - utils:
         components:
           - loading-spinner
           - error-alert
           - success-toast
           - confirmation-modal
+
     + faq
     + footer
     + header

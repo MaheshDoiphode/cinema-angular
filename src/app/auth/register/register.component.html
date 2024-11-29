@@ -15,6 +15,19 @@
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <!-- Success Alert -->
+            <div *ngIf="success"
+                class="flex p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50"
+                role="alert">
+                <span class="material-symbols-outlined mr-2">check_circle</span>
+                <div>
+                    <span class="font-medium">Success!</span> {{ successMessage }}
+                    <div class="mt-2">
+                        <a href="/auth/login" class="text-blue-600 hover:text-blue-800 font-medium">Go to Login →</a>
+                    </div>
+                </div>
+            </div>
+
             <!-- Error Alert -->
             <div *ngIf="errorMessage" class="mb-4 flex p-4 text-sm text-red-800 rounded-lg bg-red-50">
                 <span class="material-symbols-outlined mr-2">error</span>
@@ -26,11 +39,9 @@
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
                     <div class="mt-1">
-                        <input id="name" name="name" type="text" required
-                            [(ngModel)]="userData.name"
+                        <input id="name" name="name" type="text" required [(ngModel)]="userData.name"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                            [class.border-red-500]="name.invalid && (name.dirty || name.touched)"
-                            #name="ngModel"
+                            [class.border-red-500]="name.invalid && (name.dirty || name.touched)" #name="ngModel"
                             minlength="2">
                     </div>
                     <div *ngIf="name.invalid && (name.dirty || name.touched)" class="mt-1 text-sm text-red-600">
@@ -43,11 +54,9 @@
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
                     <div class="mt-1">
-                        <input id="email" name="email" type="email" required
-                            [(ngModel)]="userData.email"
+                        <input id="email" name="email" type="email" required [(ngModel)]="userData.email"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                            [class.border-red-500]="email.invalid && (email.dirty || email.touched)"
-                            #email="ngModel"
+                            [class.border-red-500]="email.invalid && (email.dirty || email.touched)" #email="ngModel"
                             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
                     </div>
                     <div *ngIf="email.invalid && (email.dirty || email.touched)" class="mt-1 text-sm text-red-600">
@@ -64,10 +73,10 @@
                             [(ngModel)]="userData.password_hash"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             [class.border-red-500]="password.invalid && (password.dirty || password.touched)"
-                            #password="ngModel"
-                            minlength="4">
+                            #password="ngModel" minlength="4">
                     </div>
-                    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="mt-1 text-sm text-red-600">
+                    <div *ngIf="password.invalid && (password.dirty || password.touched)"
+                        class="mt-1 text-sm text-red-600">
                         <div *ngIf="password.errors?.['required']">Password is required</div>
                         <div *ngIf="password.errors?.['minlength']">Password must be at least 4 characters</div>
                     </div>
@@ -75,36 +84,67 @@
 
                 <!-- Confirm Password Input -->
                 <div>
-                    <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm
+                        Password</label>
                     <div class="mt-1">
                         <input id="confirm-password" name="confirm-password" type="password" required
                             [(ngModel)]="confirmPassword"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             [class.border-red-500]="confirmPwd.invalid && (confirmPwd.dirty || confirmPwd.touched)"
-                            #confirmPwd="ngModel"
-                            minlength="4">
+                            #confirmPwd="ngModel" minlength="4">
                     </div>
-                    <div *ngIf="confirmPwd.invalid && (confirmPwd.dirty || confirmPwd.touched)" class="mt-1 text-sm text-red-600">
+                    <div *ngIf="confirmPwd.invalid && (confirmPwd.dirty || confirmPwd.touched)"
+                        class="mt-1 text-sm text-red-600">
                         <div *ngIf="confirmPwd.errors?.['required']">Please confirm your password</div>
                         <div *ngIf="confirmPwd.errors?.['minlength']">Password must be at least 4 characters</div>
                     </div>
                 </div>
+                <!-- Profile Picture Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Profile Picture</label>
+                    <div class="mt-1 flex items-center space-x-4">
+                        <div class="relative">
+                            <!-- Preview Image -->
+                            <div *ngIf="previewImage" class="relative w-20 h-20">
+                                <img [src]="previewImage" alt="Profile preview"
+                                    class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
+                                <button type="button" (click)="removeImage()"
+                                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none">
+                                    <span class="material-symbols-outlined text-sm">close</span>
+                                </button>
+                            </div>
+                            <!-- Default Avatar -->
+                            <div *ngIf="!previewImage"
+                                class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-gray-400 text-3xl">person</span>
+                            </div>
+                        </div>
 
+                        <!-- Upload Button -->
+                        <div class="flex-grow">
+                            <label
+                                class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                <span class="material-symbols-outlined mr-2">upload</span>
+                                Upload Photo
+                                <input type="file" class="hidden" accept="image/*" (change)="onFileChange($event)">
+                            </label>
+                            <p class="mt-1 text-xs text-gray-500">PNG, JPG up to 5MB</p>
+                        </div>
+                    </div>
+                </div>
                 <!-- Terms & Conditions -->
                 <div class="flex items-center">
-                    <input id="terms" name="terms" type="checkbox"
-                        [(ngModel)]="termsAccepted"
+                    <input id="terms" name="terms" type="checkbox" [(ngModel)]="termsAccepted"
                         class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     <label for="terms" class="ml-2 block text-sm text-gray-900">
-                        I agree to the 
+                        I agree to the
                         <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Terms and Conditions</a>
                     </label>
                 </div>
 
                 <!-- Submit Button -->
                 <div>
-                    <button type="submit"
-                        [disabled]="registerForm.invalid || loading || !termsAccepted"
+                    <button type="submit" [disabled]="registerForm.invalid || loading || !termsAccepted"
                         class="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50">
                         <span *ngIf="loading" class="material-symbols-outlined animate-spin mr-2">refresh</span>
                         Create Account

@@ -21,6 +21,8 @@ export class LoginComponent implements OnDestroy {
   rememberMe: boolean = false;
   errorMessage: string = '';
   loading: boolean = false;
+  success: boolean = false;
+  successMessage: string = '';
   private loginSubscription?: Subscription;
 
   constructor(
@@ -30,16 +32,19 @@ export class LoginComponent implements OnDestroy {
 
   async onSubmit() {
     if (this.loading) return;
-    
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     this.loginSubscription = this.authService.login(this.loginData)
       .subscribe({
         next: (response) => {
           this.authService.setToken(response.jwtToken);
+          this.authService.setUserType(response.role);
           if (this.rememberMe) {
-            // Implement remember me functionality if needed
+            this.success = true;
+            this.successMessage = 'Login successful';
+            this.loading = false;
           }
           this.router.navigate(['/']);
         },

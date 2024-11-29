@@ -16,6 +16,8 @@ import { Subscription } from 'rxjs';
 export class ForgotPasswordComponent implements OnDestroy {
   loading: boolean = false;
   errorMessage: string = '';
+  success: boolean = false;
+  successMessage: string = '';
   passwordData: PasswordUpdateRequest = {
     email: '',
     oldPassword: '',
@@ -27,32 +29,31 @@ export class ForgotPasswordComponent implements OnDestroy {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   async onSubmit() {
     if (this.loading) return;
 
     if (this.passwordData.newPassword !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match';
+      this.success = false;
       return;
     }
 
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     this.resetSubscription = this.authService.updatePassword(this.passwordData)
       .subscribe({
-        next: (message) => {
-          // Show success message if needed
-          console.log(message); // Password updated successfully
-          this.router.navigate(['/auth/login']);
-        },
-        error: (error) => {
-          // Handle different types of errors
-          this.errorMessage = error.error || error.message || 'An error occurred during password reset';
+        next: (response) => {
+          this.success = true;
+          this.successMessage = 'Your password has been updated successfully.';
           this.loading = false;
         },
-        complete: () => {
+        error: (error) => {
+          this.success = false;
+          this.errorMessage = error.error || error.message || 'An error occurred during password reset';
           this.loading = false;
         }
       });
