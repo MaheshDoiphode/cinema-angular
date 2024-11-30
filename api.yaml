@@ -6,6 +6,7 @@ info:
 servers:
   - url: http://localhost:8084
     description: Local development server
+
 paths:
   ## Auth
   /auth/login:
@@ -482,18 +483,18 @@ paths:
   ## Film
   /api/film:
     get:
-      summary: List All Films
+      summary: List All Films with Enhanced Data
       tags: [Films]
-      security: []  # Public endpoint
+      security: []
       responses:
         '200':
-          description: List of all films
+          description: List of all films with enhanced OMDB data
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FilmDto'
+                  $ref: '#/components/schemas/EnhancedFilmDto'
 
     post:
       summary: Create New Film
@@ -536,7 +537,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FilmDto'
+                $ref: '#/components/schemas/EnhancedFilmDto'
         '404':
           description: Film not found
 
@@ -612,7 +613,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FilmDto'
+                  $ref: '#/components/schemas/EnhancedFilmDto'
 
   /api/film/category/{villeId}/{categoryId}:
     get:
@@ -638,7 +639,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FilmDto'
+                  $ref: '#/components/schemas/EnhancedFilmDto'
 
   /api/film/upcoming:
     get:
@@ -653,7 +654,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FilmDto'
+                  $ref: '#/components/schemas/EnhancedFilmDto'
 
   /api/film/nowshowing:
     get:
@@ -668,7 +669,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FilmDto'
+                  $ref: '#/components/schemas/EnhancedFilmDto'
   ## Payment
   /api/payment/process:
     post:
@@ -1729,11 +1730,60 @@ components:
         status:
           type: string
           enum: [PENDING, VERIFIED]
+    EnhancedFilmDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        year:
+          type: string
+        rated:
+          type: string
+        released:
+          type: string
+        runtime:
+          type: string
+        genre:
+          type: string
+        director:
+          type: string
+        writer:
+          type: string
+        actors:
+          type: string
+        plot:
+          type: string
+        language:
+          type: string
+        country:
+          type: string
+        awards:
+          type: string
+        poster:
+          type: string
+        ratings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rating'
+        imdbRating:
+          type: string
+        boxOffice:
+          type: string
+  Rating:
+    type: object
+    properties:
+      source:
+        type: string
+      value:
+        type: string
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  
   
   responses:
     UnauthorizedError:
@@ -1743,4 +1793,3 @@ components:
           schema:
             type: string
             example: Unauthorized access
-

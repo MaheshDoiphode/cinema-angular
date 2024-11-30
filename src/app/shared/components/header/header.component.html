@@ -1,66 +1,67 @@
-<header class="bg-gray-100 shadow sticky top-0 z-50 bg-opacity-95 w-full h-16">
-  <div class="container mx-auto flex justify-between items-center p-4 h-full">
-    <!-- Left Group: Logo and Search -->
-    <div class="flex items-center space-x-2 h-full">
-      <img src="assets/logo.png" alt="logo" class="w-20 h-20">
-      <div class="relative hidden md:block">
+<!-- header.component.html -->
+<header class="bg-gray-100 shadow sticky top-0 z-50 bg-opacity-95 w-full">
+  <div class="container mx-auto px-4">
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center">
+        <img src="assets/cinema.png" alt="logo" class="h-12 w-auto">
+      </a>
+
+      <!-- Search Box -->
+      <div class="relative flex-1 mx-8">
         <input type="text" placeholder="Search movies, cinemas..."
-          class="pl-12 pr-4 py-2 bg-gray-200 text-gray-700 rounded-3xl focus:outline-none focus:ring-2 focus:ring-gray-700">
+          class="w-full pl-12 pr-4 py-2 bg-gray-200 text-gray-700 rounded-3xl focus:outline-none focus:ring-2 focus:ring-gray-700">
         <span class="absolute inset-y-0 left-2 flex items-center text-gray-400">
-          <span class="material-symbols-outlined cursor-pointer">
-            search
-          </span>
+          <span class="material-symbols-outlined">search</span>
         </span>
       </div>
-      <a href="#" class="text-gray-600 hover:text-gray-900 cursor-pointer md:hidden">
-        <span class="material-symbols-outlined">
-          search
-        </span>
-      </a>
-    </div>
 
-    <!-- Middle Group: Main Navigation -->
-    <nav class="hidden md:flex space-x-4 flex-grow justify-center">
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Movies</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Cinemas</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Now Showing</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">Coming Soon</div>
-      <div class="text-gray-600 cursor-pointer hover:text-gray-900">My Bookings</div>
-    </nav>
-
-    <!-- Right Group: City Selection and User Profile -->
-    <div class="flex items-center space-x-4">
-      <!-- City Selector -->
-      <div class="hidden md:flex items-center space-x-1 text-gray-600 cursor-pointer">
-        <span class="material-symbols-outlined">location_on</span>
-        <span>Select City</span>
+      <!-- Right Navigation -->
+      <div class="flex items-center space-x-6">
+        <button (click)="navigateToCity()" 
+                class="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
+          <span class="material-symbols-outlined">location_on</span>
+          <span>{{ selectedCity }}</span>
+        </button>
+        <a href="/dashboard" class="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Dashboard</span>
+        </a>
       </div>
-
-      <button class="md:hidden text-gray-600" (click)="toggleMenu()">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
-
-      <!-- User Section -->
-      <a href="#" class="text-gray-600 hover:text-gray-900">
-        <span class="material-symbols-outlined">notifications</span>
-      </a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">
-        <span class="material-symbols-outlined">account_circle</span>
-      </a>
     </div>
-  </div>
 
-  <!-- Mobile Menu -->
-  <div class="absolute top-full left-0 w-full bg-white z-50 p-4 md:hidden"
-    [ngClass]="{'block': menuOpen, 'hidden': !menuOpen}" [@flyInOut]>
-    <nav class="flex flex-col space-y-2">
-      <a href="#" class="text-gray-600 hover:text-gray-900">Movies</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Cinemas</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Now Showing</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Coming Soon</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">My Bookings</a>
-      <a href="#" class="text-gray-600 hover:text-gray-900">Select City</a>
-    </nav>
+    <!-- Mobile Navigation -->
+    <div class="md:hidden flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center">
+        <img src="assets/cinema.png" alt="logo" class="h-12 w-auto">
+      </a>
+
+      <!-- Mobile Right Icons -->
+      <div class="flex items-center space-x-4">
+        <button (click)="toggleSearch()" class="p-2 text-gray-700 hover:text-gray-900">
+          <span class="material-symbols-outlined">search</span>
+        </button>
+        <button (click)="navigateToCity()" class="p-2 text-gray-700 hover:text-gray-900">
+          <span class="material-symbols-outlined">location_on</span>
+        </button>
+        <a href="/dashboard" class="p-2 text-gray-700 hover:text-gray-900">
+          <span class="material-symbols-outlined">dashboard</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Search (Expandable) -->
+    <div *ngIf="showSearch" class="md:hidden px-4 pb-4">
+      <div class="relative">
+        <input type="text" placeholder="Search movies, cinemas..."
+          class="w-full pl-12 pr-4 py-2 bg-gray-200 text-gray-700 rounded-3xl focus:outline-none focus:ring-2 focus:ring-gray-700">
+        <span class="absolute inset-y-0 left-2 flex items-center text-gray-400">
+          <span class="material-symbols-outlined">search</span>
+        </span>
+      </div>
+    </div>
   </div>
 </header>
 

@@ -1,5 +1,7 @@
+// header.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
@@ -24,14 +26,25 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 export class HeaderComponent {
   menuOpen: boolean = false;
   isScrolled = false;
+  showSearch: boolean = false;
+  selectedCity: string = localStorage.getItem('selected_city_name') || 'Select City';
+
+  constructor(private router: Router) {}
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
-    const offset = window.scrollY;
-    this.isScrolled = offset > 0;
+    this.isScrolled = window.scrollY > 0;
   }
   
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+  }
+
+  navigateToCity() {
+    this.router.navigate(['/choose-city']);
   }
 }

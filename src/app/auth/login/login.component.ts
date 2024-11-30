@@ -46,7 +46,7 @@ export class LoginComponent implements OnDestroy {
             this.successMessage = 'Login successful';
             this.loading = false;
           }
-          this.router.navigate(['/']);
+          this.router.navigate(['/choose-city']);
         },
         error: (error) => {
           this.errorMessage = error.error?.message || 'An error occurred during login';

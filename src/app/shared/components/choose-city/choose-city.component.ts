@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "../../../auth/auth.service";
 import { Ville } from "../../models/ville.model";
-import { VilleService } from "../../services/ville.service";
+import { VilleService } from "../../../services/ville.service";
 
 @Component({
   selector: 'app-choose-city',
@@ -53,7 +53,8 @@ export class ChooseCityComponent implements OnInit {
     const selectedCity = this.cities.find(city => city.id === this.selectedCityId);
     if (selectedCity && selectedCity.id) {
       this.authService.setCityId(selectedCity.id);
-      this.router.navigate(['/']); // TODO: Update the navigation 
+      localStorage.setItem('selected_city_name', selectedCity.name);
+      this.router.navigate(['/home']); 
     }
   }
 }

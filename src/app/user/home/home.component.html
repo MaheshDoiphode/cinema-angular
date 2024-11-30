@@ -1,0 +1,69 @@
+<app-header></app-header>
+<div class="min-h-screen bg-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900">Now Showing</h1>
+            <p class="mt-2 text-lg text-gray-600">Check out what's playing in theaters near you</p>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="flex justify-center my-8">
+            <div role="status">
+                <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101"
+                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- SVG path remains same -->
+                </svg>
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="error" class="mx-auto max-w-md mb-8">
+            <div class="flex p-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
+                <span class="material-symbols-outlined mr-2">error</span>
+                <span>{{ error }}</span>
+            </div>
+        </div>
+
+        <!-- Film Grid -->
+        <div *ngIf="!loading && !error" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div *ngFor="let film of films"
+                class="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105">
+                <!-- Film Image -->
+                <div class="relative h-96">
+                    <img [src]="film.poster" [alt]="film.title" class="w-full h-full object-cover"
+                        onerror="this.src='assets/default-movie.jpg'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+
+                <!-- Film Info -->
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xl font-bold text-gray-900">{{ film.title }}</h3>
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                                ⭐ {{ film.imdbRating || 'N/A' }}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">{{ film.year }} • {{ film.runtime }}</p>
+                    <p class="text-gray-600 text-sm mb-2">Director: {{ film.director }}</p>
+                    <p class="text-gray-500 text-sm mb-2">{{ film.genre }}</p>
+                    <p class="text-gray-500 text-sm line-clamp-2">{{ film.plot }}</p>
+                    <p *ngIf="film.boxOffice && film.boxOffice !== 'N/A'" 
+                       class="text-sm text-green-600 mt-2">
+                        Box Office: {{ film.boxOffice }}
+                    </p>
+                    
+                    <!-- Action Button -->
+                    <button [routerLink]="['/movies', film.id]"
+                        class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>
