@@ -51,13 +51,11 @@
                     <p class="text-gray-600 text-sm mb-2">Director: {{ film.director }}</p>
                     <p class="text-gray-500 text-sm mb-2">{{ film.genre }}</p>
                     <p class="text-gray-500 text-sm line-clamp-2">{{ film.plot }}</p>
-                    <p *ngIf="film.boxOffice && film.boxOffice !== 'N/A'" 
-                       class="text-sm text-green-600 mt-2">
+                    <p *ngIf="film.boxOffice && film.boxOffice !== 'N/A'" class="text-sm text-green-600 mt-2">
                         Box Office: {{ film.boxOffice }}
                     </p>
-                    
-                    <!-- Action Button -->
-                    <button [routerLink]="['/movies', film.id]"
+
+                    <button [routerLink]="['/films', film.id]"
                         class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
                         Book Now
                     </button>

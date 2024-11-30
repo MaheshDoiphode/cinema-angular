@@ -15,4 +15,7 @@ export class FilmService {
   getNowShowingFilms(): Observable<EnhancedFilm[]> {
     return this.http.get<EnhancedFilm[]>(`${this.apiUrl}`);
   }
+  getFilmById(id: number): Observable<EnhancedFilm> {
+    return this.http.get<EnhancedFilm>(`${this.apiUrl}/${id}`);
+  }
 }
