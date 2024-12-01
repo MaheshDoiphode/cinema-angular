@@ -1,6 +1,6 @@
 -- Drop tables if they exist (in reverse order of dependencies)
-DROP TABLE IF EXISTS payment CASCADE;
 DROP TABLE IF EXISTS ticket CASCADE;
+DROP TABLE IF EXISTS payment CASCADE;
 DROP TABLE IF EXISTS projection_film CASCADE;
 DROP TABLE IF EXISTS seance CASCADE;
 DROP TABLE IF EXISTS place CASCADE;
@@ -84,7 +84,15 @@ CREATE TABLE projection_film (
     salle_id BIGINT REFERENCES salle(id),
     seance_id BIGINT REFERENCES seance(id)
 );
-
+CREATE TABLE payment (
+    id BIGSERIAL PRIMARY KEY,
+    amount DOUBLE PRECISION NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    transaction_id VARCHAR(255) UNIQUE,
+    user_email VARCHAR(255) REFERENCES users(email),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 CREATE TABLE ticket (
     id BIGSERIAL PRIMARY KEY,
     nom_client VARCHAR(255) NOT NULL,
@@ -94,20 +102,12 @@ CREATE TABLE ticket (
     user_email VARCHAR(255) REFERENCES users(email),
     place_id BIGINT REFERENCES place(id),
     projection_film_id BIGINT REFERENCES projection_film(id),
+    payment_id BIGINT REFERENCES payment(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(projection_film_id, place_id)
 );
 
-CREATE TABLE payment (
-    id BIGSERIAL PRIMARY KEY,
-    amount DOUBLE PRECISION NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-    transaction_id VARCHAR(255) UNIQUE,
-    user_email VARCHAR(255) REFERENCES users(email),
-    ticket_id BIGINT REFERENCES ticket(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+
 
 -- Insert sample data
 -- Users
@@ -157,14 +157,14 @@ INSERT INTO salle (id, name, nombre_places, cinema_id) VALUES
 (8, 'PREMIUM', 120, 3);
 
 -- Modify room sizes to be more manageable
-UPDATE salle SET nombre_places = 20 WHERE id = 1; -- IMAX 1 (4 rows x 5 columns)
-UPDATE salle SET nombre_places = 12 WHERE id = 2; -- VIP 1 (3 rows x 4 columns)
-UPDATE salle SET nombre_places = 15 WHERE id = 3; -- Standard 1 (3 rows x 5 columns)
-UPDATE salle SET nombre_places = 16 WHERE id = 4; -- ULTRA AVX (4 rows x 4 columns)
-UPDATE salle SET nombre_places = 12 WHERE id = 5; -- Standard 1 (3 rows x 4 columns)
-UPDATE salle SET nombre_places = 15 WHERE id = 6; -- Salle Premium (3 rows x 5 columns)
-UPDATE salle SET nombre_places = 12 WHERE id = 7; -- Salle VIP (3 rows x 4 columns)
-UPDATE salle SET nombre_places = 15 WHERE id = 8; -- Salle Standard (3 rows x 5 columns)
+UPDATE salle SET nombre_places = 20 WHERE id = 1; -- STANDARD (4 rows x 5 columns)
+UPDATE salle SET nombre_places = 12 WHERE id = 2; -- VIP (3 rows x 4 columns)
+UPDATE salle SET nombre_places = 15 WHERE id = 3; -- PREMIUM (3 rows x 5 columns)
+UPDATE salle SET nombre_places = 16 WHERE id = 4; -- STANDARD (4 rows x 4 columns)
+UPDATE salle SET nombre_places = 12 WHERE id = 5; -- PREMIUM (3 rows x 4 columns)
+UPDATE salle SET nombre_places = 15 WHERE id = 6; -- STANDARD (3 rows x 5 columns)
+UPDATE salle SET nombre_places = 12 WHERE id = 7; -- VIP (3 rows x 4 columns)
+UPDATE salle SET nombre_places = 15 WHERE id = 8; -- PREMIUM (3 rows x 5 columns)
 
 -- Places for IMAX 1 (id: 1) - 4 rows x 5 columns
 INSERT INTO place (numero, row_number, column_number, salle_id) 
@@ -253,19 +253,21 @@ INSERT INTO projection_film (id, date_projection, prix, film_id, salle_id, seanc
 (4, '2024-12-02', 19.99, 4, 1, 4);
 
 
--- Tickets
-INSERT INTO ticket (id, nom_client, prix, code_payement, reservee, user_email, place_id, projection_film_id, created_at) VALUES 
-(1, 'Sarah Connor', 15.99, 12345, true, 'user1@example.ca', 1, 1, '2024-12-01 13:45:00'),
-(2, 'John Smith', 18.99, 12346, true, 'user2@example.ca', 2, 2, '2024-12-01 16:30:00'),
-(3, 'Sarah Connor', 12.99, 12347, true, 'user1@example.ca', 3, 3, '2024-12-01 19:15:00'),
-(4, 'John Smith', 19.99, 12348, true, 'user2@example.ca', 4, 4, '2024-12-02 21:00:00');
-
 -- Payments
-INSERT INTO payment (id, amount, status, transaction_id, user_email, ticket_id, created_at, updated_at) VALUES
-(1, 15.99, 'COMPLETED', 'TXN_12345', 'user1@example.ca', 1, '2024-12-01 13:45:00', '2024-12-01 13:46:00'),
-(2, 18.99, 'COMPLETED', 'TXN_12346', 'user2@example.ca', 2, '2024-12-01 16:30:00', '2024-12-01 16:31:00'),
-(3, 12.99, 'COMPLETED', 'TXN_12347', 'user1@example.ca', 3, '2024-12-01 19:15:00', '2024-12-01 19:16:00'),
-(4, 19.99, 'COMPLETED', 'TXN_12348', 'user2@example.ca', 4, '2024-12-02 21:00:00', '2024-12-02 21:01:00');
+INSERT INTO payment (id, amount, status, transaction_id, user_email, created_at, updated_at) VALUES
+(1, 15.99, 'COMPLETED', 'TXN_12345', 'user1@example.ca', '2024-12-01 13:45:00', '2024-12-01 13:46:00'),
+(2, 18.99, 'COMPLETED', 'TXN_12346', 'user2@example.ca', '2024-12-01 16:30:00', '2024-12-01 16:31:00'),
+(3, 12.99, 'COMPLETED', 'TXN_12347', 'user1@example.ca', '2024-12-01 19:15:00', '2024-12-01 19:16:00'),
+(4, 19.99, 'COMPLETED', 'TXN_12348', 'user2@example.ca', '2024-12-02 21:00:00', '2024-12-02 21:01:00');
+
+
+-- Tickets
+INSERT INTO ticket (id, nom_client, prix, code_payement, reservee, user_email, place_id, projection_film_id, payment_id, created_at) VALUES 
+(1, 'Sarah Connor', 15.99, 12345, true, 'user1@example.ca', 1, 1, 1, '2024-12-01 13:45:00'),
+(2, 'John Smith', 18.99, 12346, true, 'user2@example.ca', 2, 2, 2, '2024-12-01 16:30:00'),
+(3, 'Sarah Connor', 12.99, 12347, true, 'user1@example.ca', 3, 3, 3, '2024-12-01 19:15:00'),
+(4, 'John Smith', 19.99, 12348, true, 'user2@example.ca', 4, 4, 4, '2024-12-02 21:00:00');
+
 -- Reset sequences
 SELECT setval('ville_id_seq', (SELECT MAX(id) FROM ville));
 SELECT setval('cinema_id_seq', (SELECT MAX(id) FROM cinema));

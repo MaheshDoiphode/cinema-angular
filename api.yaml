@@ -706,13 +706,12 @@ paths:
       tags: [Payments]
       security:
         - BearerAuth: []
-      description: Process a new payment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaymentDto'
+      parameters:
+        - name: transactionId
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '201':
           description: Payment processed successfully
@@ -722,6 +721,8 @@ paths:
                 $ref: '#/components/schemas/PaymentDto'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Payment not found
 
   /api/payment/{id}:
     get:
@@ -877,6 +878,29 @@ paths:
           description: Access denied (CINEMA_OWNER role required)
         '404':
           description: Salle not found
+  /api/place/projection/{projectionId}:
+    get:
+      summary: Get All Places with Booking Status for Projection
+      tags: [Places]
+      security: []  # Public endpoint
+      parameters:
+        - name: projectionId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the projection to get places for
+      responses:
+        '200':
+          description: List of all places with their booking status for the projection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceDto'
+        '404':
+          description: Projection not found
 
   ## Projection
   /api/projection:
@@ -1378,10 +1402,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TicketBookingRequest'
-            example:
-              projectionId: 1
-              placeIds: [1, 2, 3]
-              nomClient: "Name LastName"
       responses:
         '200':
           description: Tickets booked successfully
@@ -1390,21 +1410,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TicketDto'
-              example:
-                - id: 1
-                  nomClient: "Name LastName"
-                  prix: 50.00
-                  codePayement: 12345
-                  reservee: true
-                  placeId: 1
-                  projectionFilmId: 1
-                  seatNumber: 1
-                  rowNumber: 1
-                  columnNumber: 1
-                  salleName: "Salle 1"
-                  cinemaName: "Cinema 1"
-                  filmTitle: "Movie 1"
+                  $ref: '#/components/schemas/TicketBookingResponseDto'
         '400':
           description: Invalid request or seats already booked
         '401':
@@ -1593,6 +1599,33 @@ paths:
 
 components:
   schemas:
+    TicketBookingResponseDto:
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketDto'
+        payment:
+          $ref: '#/components/schemas/PaymentDto'
+        totalAmount:
+          type: number
+          format: double
+        transactionId:
+          type: string
+        bookingDate:
+          type: string
+          format: date-time
+        filmTitle:
+          type: string
+        cinemaName:
+          type: string
+        projectionDate:
+          type: string
+          format: date
+        seanceTime:
+          type: string
+          format: date-time
     VilleDto:
       type: object
       properties:
@@ -1722,6 +1755,8 @@ components:
           type: integer
         salleId:
           type: integer
+        isBooked:
+          type: boolean
     PlaceConfigurationDto:
       type: object
       properties:

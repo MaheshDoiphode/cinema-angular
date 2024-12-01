@@ -5,12 +5,16 @@ import { Observable } from 'rxjs';
 import { environment } from '../shared/utils/environments/environment';
 import { Projection } from '../shared/models/projection.model';
 import { Place } from '../shared/models/place.model';
+import { Ticket } from '../shared/models/ticket.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectionService {
   private apiUrl = `${environment.apiUrl}/api/projection`;
+  private ticketUrl = `${environment.apiUrl}/api/ticket`;
+  private placeUrl = `${environment.apiUrl}/api/place`;
+
 
   constructor(private http: HttpClient) { }
 
@@ -20,5 +24,8 @@ export class ProjectionService {
 
   getAvailablePlaces(projectionId: number): Observable<Place[]> {
     return this.http.get<Place[]>(`${this.apiUrl}/${projectionId}/places`);
+  }
+  getPlacesWithStatus(projectionId: number): Observable<Place[]> {
+    return this.http.get<Place[]>(`${this.placeUrl}/projection/${projectionId}`);
   }
 }

@@ -1,3 +1,5 @@
+import { Payment } from "./payment.model";
+
 export interface Ticket {
     id?: number;
     nomClient: string;
@@ -18,8 +20,20 @@ export interface Ticket {
     projectionDate?: Date;
     seanceTime?: Date;
 }
+
+export interface TicketBookingResponse {
+  tickets: Ticket[];
+  payment: Payment;
+  totalAmount: number;
+  transactionId: string;
+  bookingDate: Date;
+  filmTitle: string;
+  cinemaName: string;
+  projectionDate: Date;
+  seanceTime: Date;
+}
 export interface TicketBookingRequest {
     projectionId: number;
-    placeId: number[];
+    placeIds: number[];
     nomClient: string;
 }

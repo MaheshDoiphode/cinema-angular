@@ -1,0 +1,59 @@
+<app-header></app-header>
+<div class="min-h-screen bg-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-900">Your Tickets</h1>
+            <p class="mt-2 text-lg text-gray-600">Booking confirmed successfully</p>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="flex justify-center my-8">
+            <div role="status">
+                <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101"
+                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- ... spinner SVG ... -->
+                </svg>
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Tickets List -->
+        <div *ngIf="!loading && tickets.length > 0" class="space-y-6">
+            <div *ngFor="let ticket of tickets" 
+                 class="bg-white rounded-lg shadow-lg p-6 transform transition-all duration-300 hover:scale-105">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">{{ ticket.filmTitle }}</h2>
+                        <p class="text-sm text-gray-600">{{ ticket.cinemaName }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-semibold text-gray-900">Seat: {{ ticket.seatNumber }}</p>
+                        <p class="text-xs text-gray-600">Row: {{ ticket.rowNumber }}, Col: {{ ticket.columnNumber }}</p>
+                    </div>
+                </div>
+                <div class="border-t pt-4">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-600">Date:</p>
+                            <p class="font-semibold">{{ ticket.projectionDate | date:'mediumDate' }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-600">Time:</p>
+                            <p class="font-semibold">{{ ticket.seanceTime | date:'shortTime' }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-sm text-gray-600">
+                    <p>Booking Reference: {{ ticket.codePayement }}</p>
+                    <p>Price: ${{ ticket.prix }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Tickets -->
+        <div *ngIf="!loading && tickets.length === 0" class="text-center py-12">
+            <p class="text-gray-600">No tickets found.</p>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

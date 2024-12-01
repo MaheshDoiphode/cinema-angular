@@ -4,6 +4,8 @@ export interface Place {
     rowNumber: number;
     columnNumber: number;
     salleId: number;
+    reservee?: boolean;
+    isBooked?: boolean;
   }
   
   export interface PlaceConfiguration {

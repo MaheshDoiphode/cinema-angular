@@ -8,11 +8,14 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { AuthService } from '../../auth/auth.service';
 import { Place } from '../../shared/models/place.model';
-import { TicketBookingRequest } from '../../shared/models/ticket.model';
+import { TicketBookingRequest, TicketBookingResponse } from '../../shared/models/ticket.model';
+import { forkJoin } from 'rxjs';
+import { PaymentConfirmationComponent } from '../../shared/components/payment-confirmation/payment-confirmation.component';
+import { PaymentService } from '../../services/payment.service';
 @Component({
   selector: 'app-book',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, HeaderComponent, FooterComponent, PaymentConfirmationComponent],
   templateUrl: './book.component.html'
 })
 export class BookComponent implements OnInit {
@@ -25,19 +28,23 @@ export class BookComponent implements OnInit {
   loading: boolean = true;
   error: string = '';
   bookingInProgress: boolean = false;
+  bookedSeats: Set<number> = new Set();
+  showPaymentModal = false;
+  bookingResponse: TicketBookingResponse | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private projectionService: ProjectionService,
     private ticketService: TicketService,
+    private paymentService: PaymentService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.filmId = Number(this.route.snapshot.paramMap.get('filmId'));
     this.cinemaId = Number(this.route.snapshot.paramMap.get('cinemaId'));
-    
+
     if (!this.filmId || !this.cinemaId) {
       this.error = 'Invalid parameters';
       this.loading = false;
@@ -70,26 +77,27 @@ export class BookComponent implements OnInit {
 
   loadAvailablePlaces(projectionId: number) {
     this.loading = true;
-    this.projectionService.getAvailablePlaces(projectionId).subscribe({
+    this.selectedSeats = []; // Reset selected seats
+
+    this.projectionService.getPlacesWithStatus(projectionId).subscribe({
       next: (places) => {
         this.availablePlaces = places;
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Failed to load available seats';
+        this.error = 'Failed to load seats. Please try again.';
         this.loading = false;
       }
     });
   }
 
   isSeatAvailable(place: Place): boolean {
-    // Add logic to check if seat is already booked
-    return !place.reservee;
+    return !place.isBooked;
   }
-  
+
   selectSeat(place: Place) {
     if (!this.isSeatAvailable(place)) return;
-  
+
     const index = this.selectedSeats.findIndex(seat => seat.id === place.id);
     if (index > -1) {
       this.selectedSeats.splice(index, 1);
@@ -105,23 +113,23 @@ export class BookComponent implements OnInit {
   getTotalPrice(): number {
     return this.selectedSeats.length * (this.selectedProjection?.prix || 0);
   }
-
-    async bookTickets() {
+  async bookTickets() {
     if (!this.selectedProjection || this.selectedSeats.length === 0) return;
-  
+
     this.bookingInProgress = true;
     this.error = '';
-  
+
     const bookingRequest: TicketBookingRequest = {
       projectionId: this.selectedProjection.id!,
       placeIds: this.selectedSeats.map(seat => seat.id!),
       nomClient: this.authService.getUserName() || 'Customer'
     };
-  
+
     this.ticketService.bookTickets(bookingRequest).subscribe({
-      next: (tickets) => {
-        // Store booked tickets info if needed
-        this.router.navigate(['/tickets']);
+      next: (response) => {
+        this.bookingResponse = response;
+        this.showPaymentModal = true;
+        this.bookingInProgress = false;
       },
       error: (error) => {
         if (error.status === 400) {
@@ -133,4 +141,25 @@ export class BookComponent implements OnInit {
       }
     });
   }
+  handlePaymentConfirm() {
+    if (!this.bookingResponse) return;
+    
+    this.paymentService.processPayment(this.bookingResponse.transactionId).subscribe({
+      next: (payment) => {
+        // Store tickets in local storage for immediate access in tickets page
+        localStorage.setItem('latest_tickets', JSON.stringify(this.bookingResponse?.tickets));
+        this.router.navigate(['/tickets']);
+      },
+      error: (error) => {
+        this.error = 'Payment processing failed. Please try again.';
+        this.showPaymentModal = false;
+      }
+    });
+  }
+
+  handlePaymentCancel() {
+    this.showPaymentModal = false;
+    this.bookingResponse = null;
+  }
+
 }

@@ -50,19 +50,23 @@
                 <div class="w-3/4 h-4 bg-gray-300 mx-auto mb-8 rounded-lg">
                     <p class="text-center text-sm text-gray-600 mt-2">Screen</p>
                 </div>
-
                 <!-- Seats Grid -->
                 <div class="grid grid-cols-8 gap-2 max-w-2xl mx-auto">
                     <div *ngFor="let place of availablePlaces" (click)="isSeatAvailable(place) && selectSeat(place)"
-                        [class.bg-blue-600]="isSeatSelected(place)" [class.bg-gray-400]="!isSeatAvailable(place)"
-                        [class.cursor-not-allowed]="!isSeatAvailable(place)"
-                        [class.text-white]="isSeatSelected(place) || !isSeatAvailable(place)"
-                        class="aspect-square rounded-md border-2 border-gray-300 hover:border-blue-500 cursor-pointer flex items-center justify-center transition-all">
-                        <span>{{ place.numero }}</span>
-                        <span class="text-xs">R{{ place.rowNumber }}C{{ place.columnNumber }}</span>
+                        [class.bg-blue-600]="isSeatSelected(place)" [class.bg-gray-400]="place.isBooked"
+                        [class.cursor-not-allowed]="place.isBooked"
+                        [class.text-white]="isSeatSelected(place) || place.isBooked"
+                        class="relative aspect-square rounded-md border-2 border-gray-300 hover:border-blue-500 cursor-pointer flex flex-col items-center justify-center transition-all">
+                        <span class="text-sm">{{ place.numero }}</span>
+                        <span class="text-xs">R{{ place.rowNumber }}</span>
+                        <span class="text-xs">C{{ place.columnNumber }}</span>
+                        <!-- Tooltip for booked seats -->
+                        <!-- <div *ngIf="place.isBooked"
+                            class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                            Already booked
+                        </div> -->
                     </div>
                 </div>
-
                 <!-- Booking Summary -->
                 <div *ngIf="selectedSeats.length > 0" class="mt-8 border-t pt-4">
                     <div class="max-w-md mx-auto">
@@ -106,3 +110,10 @@
     </div>
 </div>
 <app-footer></app-footer>
+
+<app-payment-confirmation 
+  *ngIf="showPaymentModal && bookingResponse"
+  [bookingData]="bookingResponse"
+  (confirm)="handlePaymentConfirm()"
+  (cancel)="handlePaymentCancel()">
+</app-payment-confirmation>
