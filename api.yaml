@@ -1368,7 +1368,7 @@ paths:
 
   /api/ticket/book:
     post:
-      summary: Book Ticket
+      summary: Book Single or Multiple Tickets
       tags: [Tickets]
       security:
         - BearerAuth: []
@@ -1378,13 +1378,35 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TicketBookingRequest'
+            example:
+              projectionId: 1
+              placeIds: [1, 2, 3]
+              nomClient: "Name LastName"
       responses:
         '200':
-          description: Ticket booked successfully
+          description: Tickets booked successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TicketDto'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketDto'
+              example:
+                - id: 1
+                  nomClient: "Name LastName"
+                  prix: 50.00
+                  codePayement: 12345
+                  reservee: true
+                  placeId: 1
+                  projectionFilmId: 1
+                  seatNumber: 1
+                  rowNumber: 1
+                  columnNumber: 1
+                  salleName: "Salle 1"
+                  cinemaName: "Cinema 1"
+                  filmTitle: "Movie 1"
+        '400':
+          description: Invalid request or seats already booked
         '401':
           $ref: '#/components/responses/UnauthorizedError'
 

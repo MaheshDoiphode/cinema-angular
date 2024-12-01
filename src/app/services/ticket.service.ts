@@ -12,7 +12,7 @@ export class TicketService {
 
   constructor(private http: HttpClient) { }
 
-  bookTicket(bookingRequest: TicketBookingRequest): Observable<Ticket> {
-    return this.http.post<Ticket>(`${this.apiUrl}/book`, bookingRequest);
+  bookTickets(bookingRequest: TicketBookingRequest): Observable<Ticket[]> {
+    return this.http.post<Ticket[]>(`${this.apiUrl}/book`, bookingRequest);
   }
 }

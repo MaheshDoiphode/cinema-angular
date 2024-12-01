@@ -53,10 +53,13 @@
 
                 <!-- Seats Grid -->
                 <div class="grid grid-cols-8 gap-2 max-w-2xl mx-auto">
-                    <div *ngFor="let place of availablePlaces" (click)="selectSeat(place)"
-                        [class.bg-blue-600]="isSeatSelected(place)" [class.text-white]="isSeatSelected(place)"
+                    <div *ngFor="let place of availablePlaces" (click)="isSeatAvailable(place) && selectSeat(place)"
+                        [class.bg-blue-600]="isSeatSelected(place)" [class.bg-gray-400]="!isSeatAvailable(place)"
+                        [class.cursor-not-allowed]="!isSeatAvailable(place)"
+                        [class.text-white]="isSeatSelected(place) || !isSeatAvailable(place)"
                         class="aspect-square rounded-md border-2 border-gray-300 hover:border-blue-500 cursor-pointer flex items-center justify-center transition-all">
-                        {{ place.numero }}
+                        <span>{{ place.numero }}</span>
+                        <span class="text-xs">R{{ place.rowNumber }}C{{ place.columnNumber }}</span>
                     </div>
                 </div>
 

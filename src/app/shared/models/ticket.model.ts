@@ -20,6 +20,6 @@ export interface Ticket {
 }
 export interface TicketBookingRequest {
     projectionId: number;
-    placeId: number;
+    placeId: number[];
     nomClient: string;
 }

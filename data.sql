@@ -147,14 +147,14 @@ INSERT INTO film (id, titre, duree, realisateur, description, date_sortie, categ
 
 -- Salles
 INSERT INTO salle (id, name, nombre_places, cinema_id) VALUES 
-(1, 'IMAX 1', 200, 1),
-(2, 'VIP 1', 100, 1),
-(3, 'Standard 1', 150, 1),
-(4, 'ULTRA AVX', 180, 2),
-(5, 'Standard 1', 140, 2),
-(6, 'Salle Premium', 160, 3),
-(7, 'Salle VIP', 80, 3),
-(8, 'Salle Standard', 120, 3);
+(1, 'STANDARD', 200, 1),
+(2, 'VIP', 100, 1),
+(3, 'PREMIUM', 150, 1),
+(4, 'STANDARD', 180, 2),
+(5, 'PREMIUM', 140, 2),
+(6, 'STANDARD', 160, 3),
+(7, 'VIP', 80, 3),
+(8, 'PREMIUM', 120, 3);
 
 -- Modify room sizes to be more manageable
 UPDATE salle SET nombre_places = 20 WHERE id = 1; -- IMAX 1 (4 rows x 5 columns)

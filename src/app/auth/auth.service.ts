@@ -12,6 +12,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'jwt_token';
   private readonly CITY_KEY = 'selected_city_id';
   private readonly USER_TYPE = 'user_type';
+  private readonly USER_NAME = 'user_name';
   private readonly API_URL = `${environment.apiUrl}/auth`;
   
   constructor(private http: HttpClient) {}
@@ -51,6 +52,14 @@ export class AuthService {
   setUserType(userType: string) {
     localStorage.setItem(this.USER_TYPE, userType);
   }
+  
+getUserName(): string | null {
+  return localStorage.getItem(this.USER_NAME);
+}
+
+setUserName(name: string) {
+  localStorage.setItem(this.USER_NAME, name);
+}
 
   setCityId(id: number) {
     localStorage.setItem(this.CITY_KEY, id.toString());

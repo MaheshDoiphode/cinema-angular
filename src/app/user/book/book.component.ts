@@ -8,7 +8,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { AuthService } from '../../auth/auth.service';
 import { Place } from '../../shared/models/place.model';
-
+import { TicketBookingRequest } from '../../shared/models/ticket.model';
 @Component({
   selector: 'app-book',
   standalone: true,
@@ -82,7 +82,14 @@ export class BookComponent implements OnInit {
     });
   }
 
+  isSeatAvailable(place: Place): boolean {
+    // Add logic to check if seat is already booked
+    return !place.reservee;
+  }
+  
   selectSeat(place: Place) {
+    if (!this.isSeatAvailable(place)) return;
+  
     const index = this.selectedSeats.findIndex(seat => seat.id === place.id);
     if (index > -1) {
       this.selectedSeats.splice(index, 1);
@@ -99,28 +106,31 @@ export class BookComponent implements OnInit {
     return this.selectedSeats.length * (this.selectedProjection?.prix || 0);
   }
 
-  async bookTickets() {
+    async bookTickets() {
     if (!this.selectedProjection || this.selectedSeats.length === 0) return;
-
+  
     this.bookingInProgress = true;
     this.error = '';
-
-    try {
-      const bookingPromises = this.selectedSeats.map(seat => {
-        const bookingRequest = {
-          projectionId: this.selectedProjection!.id!,
-          placeId: seat.id!,
-          nomClient: 'Customer' // You might want to get this from user profile
-        };
-        return this.ticketService.bookTicket(bookingRequest).toPromise();
-      });
-
-      await Promise.all(bookingPromises);
-      this.router.navigate(['/tickets']); // Navigate to tickets page after booking
-    } catch (error) {
-      this.error = 'Failed to book tickets. Please try again.';
-    } finally {
-      this.bookingInProgress = false;
-    }
+  
+    const bookingRequest: TicketBookingRequest = {
+      projectionId: this.selectedProjection.id!,
+      placeIds: this.selectedSeats.map(seat => seat.id!),
+      nomClient: this.authService.getUserName() || 'Customer'
+    };
+  
+    this.ticketService.bookTickets(bookingRequest).subscribe({
+      next: (tickets) => {
+        // Store booked tickets info if needed
+        this.router.navigate(['/tickets']);
+      },
+      error: (error) => {
+        if (error.status === 400) {
+          this.error = 'Some seats are already booked. Please try different seats.';
+        } else {
+          this.error = 'Failed to book tickets. Please try again.';
+        }
+        this.bookingInProgress = false;
+      }
+    });
   }
 }

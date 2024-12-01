@@ -41,6 +41,7 @@ export class LoginComponent implements OnDestroy {
         next: (response) => {
           this.authService.setToken(response.jwtToken);
           this.authService.setUserType(response.role);
+          this.authService.setUserName(response.username);
           if (this.rememberMe) {
             this.success = true;
             this.successMessage = 'Login successful';
