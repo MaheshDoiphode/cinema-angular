@@ -1,0 +1,105 @@
+<!-- src/app/user/book/book.component.html -->
+<app-header></app-header>
+<div class="min-h-screen bg-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-900">Select Show Time & Seats</h1>
+            <p class="mt-2 text-lg text-gray-600">Choose your preferred show time and seats</p>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="flex justify-center my-8">
+            <div role="status">
+                <!-- Spinner SVG -->
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="error" class="mx-auto max-w-md mb-8">
+            <div class="flex p-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
+                <span class="material-symbols-outlined mr-2">error</span>
+                <span>{{ error }}</span>
+            </div>
+        </div>
+
+        <!-- Show Times -->
+        <div *ngIf="!loading && !error && projections.length > 0" class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Available Show Times</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button *ngFor="let projection of projections" (click)="selectProjection(projection)"
+                    [class.bg-blue-600]="selectedProjection?.id === projection.id"
+                    [class.text-white]="selectedProjection?.id === projection.id"
+                    class="p-4 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-all">
+                    <div class="text-lg font-semibold">
+                        {{ projection.dateProjection | date:'shortDate' }}
+                    </div>
+                    <div class="text-sm">
+                        Price: ${{ projection.prix }}
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Seat Layout -->
+        <div *ngIf="selectedProjection && availablePlaces.length > 0" class="mt-8">
+            <h2 class="text-xl font-semibold mb-4">Select Your Seats</h2>
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <!-- Screen -->
+                <div class="w-3/4 h-4 bg-gray-300 mx-auto mb-8 rounded-lg">
+                    <p class="text-center text-sm text-gray-600 mt-2">Screen</p>
+                </div>
+
+                <!-- Seats Grid -->
+                <div class="grid grid-cols-8 gap-2 max-w-2xl mx-auto">
+                    <div *ngFor="let place of availablePlaces" (click)="selectSeat(place)"
+                        [class.bg-blue-600]="isSeatSelected(place)" [class.text-white]="isSeatSelected(place)"
+                        class="aspect-square rounded-md border-2 border-gray-300 hover:border-blue-500 cursor-pointer flex items-center justify-center transition-all">
+                        {{ place.numero }}
+                    </div>
+                </div>
+
+                <!-- Booking Summary -->
+                <div *ngIf="selectedSeats.length > 0" class="mt-8 border-t pt-4">
+                    <div class="max-w-md mx-auto">
+                        <h3 class="text-lg font-semibold mb-2">Booking Summary</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Selected Seats:</span>
+                                <span>{{ selectedSeats.length }}</span>
+                            </div>
+                            <div class="flex justify-between font-semibold">
+                                <span>Total Price:</span>
+                                <span>${{ getTotalPrice() | number:'1.2-2' }}</span>
+                            </div>
+                            <button (click)="bookTickets()" [disabled]="bookingInProgress"
+                                class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span *ngIf="bookingInProgress"
+                                    class="material-symbols-outlined animate-spin mr-2">refresh</span>
+                                {{ bookingInProgress ? 'Booking...' : 'Proceed to Payment' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-8 flex justify-center space-x-8">
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 border-2 border-gray-300 rounded-md mr-2"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 bg-blue-600 rounded-md mr-2"></div>
+                        <span>Selected</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 bg-gray-400 rounded-md mr-2"></div>
+                        <span>Taken</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

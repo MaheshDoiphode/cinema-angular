@@ -50,11 +50,18 @@ export class ChooseCityComponent implements OnInit {
 
   continueToHome() {
     if (!this.selectedCityId) return;
+    
     const selectedCity = this.cities.find(city => city.id === this.selectedCityId);
     if (selectedCity && selectedCity.id) {
       this.authService.setCityId(selectedCity.id);
       localStorage.setItem('selected_city_name', selectedCity.name);
-      this.router.navigate(['/home']); 
+      const pendingFilmId = sessionStorage.getItem('pendingFilmId');
+      if (pendingFilmId) {
+        sessionStorage.removeItem('pendingFilmId');
+        this.router.navigate(['/select-cinema', pendingFilmId]);
+      } else {
+        this.router.navigate(['/home']);
+      }
     }
   }
 }

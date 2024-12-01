@@ -1,3 +1,16 @@
+-- Drop tables if they exist (in reverse order of dependencies)
+DROP TABLE IF EXISTS payment CASCADE;
+DROP TABLE IF EXISTS ticket CASCADE;
+DROP TABLE IF EXISTS projection_film CASCADE;
+DROP TABLE IF EXISTS seance CASCADE;
+DROP TABLE IF EXISTS place CASCADE;
+DROP TABLE IF EXISTS salle CASCADE;
+DROP TABLE IF EXISTS film CASCADE;
+DROP TABLE IF EXISTS categorie CASCADE;
+DROP TABLE IF EXISTS cinema CASCADE;
+DROP TABLE IF EXISTS ville CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 -- Create tables
 CREATE TABLE users (
     email VARCHAR(255) PRIMARY KEY,
@@ -227,33 +240,32 @@ FROM generate_series(1, 15) n;
 
 -- Seances
 INSERT INTO seance (id, heure_debut) VALUES 
-(1, '2024-01-20 14:00:00'),
-(2, '2024-01-20 17:00:00'),
-(3, '2024-01-20 20:00:00'),
-(4, '2024-01-20 22:30:00');
+(1, '2024-12-01 14:00:00'),
+(2, '2024-12-01 17:00:00'),
+(3, '2024-12-01 20:00:00'),
+(4, '2024-12-02 22:30:00');
 
 -- ProjectionFilm
 INSERT INTO projection_film (id, date_projection, prix, film_id, salle_id, seance_id) VALUES 
-(1, '2024-01-20', 15.99, 1, 1, 1),
-(2, '2024-01-20', 18.99, 2, 2, 2),
-(3, '2024-01-20', 12.99, 3, 3, 3),
-(4, '2024-01-20', 19.99, 4, 1, 4);
+(1, '2024-12-01', 15.99, 1, 1, 1),
+(2, '2024-12-01', 18.99, 2, 2, 2),
+(3, '2024-12-01', 12.99, 3, 3, 3),
+(4, '2024-12-02', 19.99, 4, 1, 4);
 
 
 -- Tickets
 INSERT INTO ticket (id, nom_client, prix, code_payement, reservee, user_email, place_id, projection_film_id, created_at) VALUES 
-(1, 'Sarah Connor', 15.99, 12345, true, 'user1@example.ca', 1, 1, '2024-01-20 13:45:00'),
-(2, 'John Smith', 18.99, 12346, true, 'user2@example.ca', 2, 2, '2024-01-20 16:30:00');
-INSERT INTO ticket (id, nom_client, prix, code_payement, reservee, user_email, place_id, projection_film_id, created_at) VALUES 
-(3, 'Sarah Connor', 12.99, 12347, true, 'user1@example.ca', 3, 3, '2024-01-20 19:15:00'),
-(4, 'John Smith', 19.99, 12348, true, 'user2@example.ca', 4, 4, '2024-01-20 22:00:00');
+(1, 'Sarah Connor', 15.99, 12345, true, 'user1@example.ca', 1, 1, '2024-12-01 13:45:00'),
+(2, 'John Smith', 18.99, 12346, true, 'user2@example.ca', 2, 2, '2024-12-01 16:30:00'),
+(3, 'Sarah Connor', 12.99, 12347, true, 'user1@example.ca', 3, 3, '2024-12-01 19:15:00'),
+(4, 'John Smith', 19.99, 12348, true, 'user2@example.ca', 4, 4, '2024-12-02 21:00:00');
 
 -- Payments
 INSERT INTO payment (id, amount, status, transaction_id, user_email, ticket_id, created_at, updated_at) VALUES
-(1, 15.99, 'COMPLETED', 'TXN_12345', 'user1@example.ca', 1, '2024-01-20 13:45:00', '2024-01-20 13:46:00'),
-(2, 18.99, 'COMPLETED', 'TXN_12346', 'user2@example.ca', 2, '2024-01-20 16:30:00', '2024-01-20 16:31:00'),
-(3, 12.99, 'COMPLETED', 'TXN_12347', 'user1@example.ca', 3, '2024-01-20 19:15:00', '2024-01-20 19:16:00'),
-(4, 19.99, 'COMPLETED', 'TXN_12348', 'user2@example.ca', 4, '2024-01-20 22:00:00', '2024-01-20 22:01:00');
+(1, 15.99, 'COMPLETED', 'TXN_12345', 'user1@example.ca', 1, '2024-12-01 13:45:00', '2024-12-01 13:46:00'),
+(2, 18.99, 'COMPLETED', 'TXN_12346', 'user2@example.ca', 2, '2024-12-01 16:30:00', '2024-12-01 16:31:00'),
+(3, 12.99, 'COMPLETED', 'TXN_12347', 'user1@example.ca', 3, '2024-12-01 19:15:00', '2024-12-01 19:16:00'),
+(4, 19.99, 'COMPLETED', 'TXN_12348', 'user2@example.ca', 4, '2024-12-02 21:00:00', '2024-12-02 21:01:00');
 -- Reset sequences
 SELECT setval('ville_id_seq', (SELECT MAX(id) FROM ville));
 SELECT setval('cinema_id_seq', (SELECT MAX(id) FROM cinema));

@@ -9,6 +9,8 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ChooseCityComponent } from './shared/components/choose-city/choose-city.component';
 import { HomeComponent } from './user/home/home.component';
 import { FilmDetailsComponent } from './user/film-details/film-details.component';
+import { SelectCinemaComponent } from './user/select-cinema/select-cinema.component';
+import { BookComponent } from './user/book/book.component';
 export const routes: Routes = [
     // Redirect empty path to login
     {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -28,6 +30,8 @@ export const routes: Routes = [
     // user related routes. 
     {path: 'home', component: HomeComponent},
     {path: 'film-details/:id', component: FilmDetailsComponent},
+    {path: 'select-cinema/:id', component: SelectCinemaComponent},
+    {path: 'book/:filmId/:cinemaId', component: BookComponent},
 
     // Wildcard route for 404
     {path: '**', redirectTo: 'auth/login'}

@@ -480,6 +480,35 @@ paths:
                   $ref: '#/components/schemas/SalleDto'
         '404':
           description: Cinema not found
+  /api/cinema/ville/{villeId}/film/{filmId}:
+    get:
+      summary: Get Cinemas Showing Film in City
+      tags: [Cinema]
+      security: []  # Public endpoint
+      parameters:
+        - name: villeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the city
+        - name: filmId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the film
+      responses:
+        '200':
+          description: List of cinemas showing the specified film in the city
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CinemaDto'
+        '404':
+          description: No cinemas found showing this film in the specified city
   ## Film
   /api/film:
     get:
@@ -1040,7 +1069,41 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PlaceDto'
-
+  /api/projection/film/{filmId}/ville/{villeId}:
+    get:
+      summary: Get Projections by Film and City
+      tags: [Projections]
+      security: []  # Public endpoint
+      parameters:
+        - name: filmId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the film
+        - name: villeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the city
+      responses:
+        '200':
+          description: List of projections for the film in specified city
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDto'
+        '404':
+          description: No projections found for the specified film and city
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "No projections found for film ID {filmId} in ville ID {villeId}"
+                
   ## Salle
   /api/salle/{id}:
     get:
@@ -1793,3 +1856,4 @@ components:
           schema:
             type: string
             example: Unauthorized access
+
