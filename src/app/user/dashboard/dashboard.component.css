@@ -28,3 +28,86 @@
   background: #2563eb;
   transform: scale(1.1);
 }
+/* Add to dashboard.component.css */
+.profile-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(59, 130, 246, 0.05) 0%,
+    rgba(147, 51, 234, 0.05) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-card:hover::after {
+  opacity: 1;
+}
+
+.profile-input {
+  @apply transition-all duration-200;
+}
+
+.profile-input:focus {
+  @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* Add to dashboard.component.css */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.pattern-dots {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: calc(10 * 1px) calc(10 * 1px);
+}
+
+.pattern-crosses {
+  background-image: 
+    linear-gradient(currentColor 1px, transparent 1px),
+    linear-gradient(to right, currentColor 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+.pattern-waves {
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      currentColor 0,
+      currentColor 1px,
+      transparent 0,
+      transparent 50%
+    );
+  background-size: 10px 10px;
+}
+
+/* Enhance focus states */
+input:focus {
+  box-shadow: 
+    0 0 0 2px #fff,
+    0 0 0 4px rgba(59, 130, 246, 0.5);
+}
+
+/* Improve button hover states */
+button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active {
+  transform: scale(0.95);
+}

@@ -26,7 +26,8 @@ export class DashboardComponent implements OnInit {
   editMode = false;
   updatedUser: User | null = null;
   imagePreview: string | null = null;
-
+  selectedDate: string = '';
+  filteredTickets: Ticket[] = [];
 
   constructor(
     private userService: UserService,
@@ -36,8 +37,17 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loadUserData();
+    this.filteredTickets = this.tickets;
   }
-
+  filterTickets() {
+    if (!this.selectedDate) {
+      this.filteredTickets = this.tickets;
+      return;
+    }
+    this.filteredTickets = this.tickets.filter(ticket =>
+      new Date(ticket.projectionDate!).toDateString() === new Date(this.selectedDate).toDateString()
+    );
+  }
   loadUserData() {
     this.loading = true;
     this.userService.getProfile().subscribe({
@@ -56,11 +66,16 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-
+  cancelEdit() {
+    this.editMode = false;
+    this.updatedUser = { ...this.user! };
+    this.imagePreview = null;
+  }
   loadUserTickets() {
     this.userService.getUserTickets().subscribe({
       next: (tickets) => {
         this.tickets = tickets;
+        this.filteredTickets = tickets;
         this.loading = false;
       },
       error: (error) => {
