@@ -111,3 +111,53 @@ button {
 button:active {
   transform: scale(0.95);
 }
+/* Add to dashboard.component.css */
+/* Ticket card enhancements */
+.ticket-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-card::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #f3f4f6;
+  border-radius: 50%;
+  box-shadow: 
+    0 -120px 0 #f3f4f6,
+    0 120px 0 #f3f4f6;
+}
+
+/* Date picker styling */
+input[type="date"] {
+  color-scheme: light;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: transparent;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+/* Add to dashboard.component.css */
+.filter-button {
+  @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200;
+}
+
+.filter-button.active {
+  @apply bg-white shadow-sm;
+}
+
+.filter-button:hover:not(.active) {
+  @apply bg-gray-200;
+}

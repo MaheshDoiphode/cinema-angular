@@ -1,3 +1,8 @@
+export type DateFilterType = 'today' | 'week' | 'month' | 'all';
+export type StatusFilterType = 'upcoming' | 'past' | 'all';
+const DATE_FILTERS: DateFilterType[] = ['today', 'week', 'month', 'all'];
+const STATUS_FILTERS: StatusFilterType[] = ['upcoming', 'past', 'all'];
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -28,26 +33,83 @@ export class DashboardComponent implements OnInit {
   imagePreview: string | null = null;
   selectedDate: string = '';
   filteredTickets: Ticket[] = [];
+  dateFilter: DateFilterType = 'all';
+  ticketStatus: StatusFilterType = 'all';
+  readonly dateFilters = DATE_FILTERS;
+  readonly statusFilters = STATUS_FILTERS;
+
 
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private router: Router
   ) { }
+  setDateFilter(filter: DateFilterType) {
+    this.dateFilter = filter;
+    this.filterTickets();
+  }
 
+  setStatusFilter(status: StatusFilterType) {
+    this.ticketStatus = status;
+    this.filterTickets();
+  }
   ngOnInit() {
     this.loadUserData();
     this.filteredTickets = this.tickets;
   }
   filterTickets() {
-    if (!this.selectedDate) {
-      this.filteredTickets = this.tickets;
-      return;
+    let filtered = [...this.tickets];
+
+    // First apply date filter
+    if (this.dateFilter !== 'all') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      switch (this.dateFilter) {
+        case 'today':
+          filtered = filtered.filter(ticket =>
+            new Date(ticket.projectionDate!).toDateString() === today.toDateString()
+          );
+          break;
+        case 'week':
+          const weekAhead = new Date(today);
+          weekAhead.setDate(weekAhead.getDate() + 7);
+          filtered = filtered.filter(ticket => {
+            const date = new Date(ticket.projectionDate!);
+            return date >= today && date <= weekAhead;
+          });
+          break;
+        case 'month':
+          const monthAhead = new Date(today);
+          monthAhead.setMonth(monthAhead.getMonth() + 1);
+          filtered = filtered.filter(ticket => {
+            const date = new Date(ticket.projectionDate!);
+            return date >= today && date <= monthAhead;
+          });
+          break;
+      }
     }
-    this.filteredTickets = this.tickets.filter(ticket =>
-      new Date(ticket.projectionDate!).toDateString() === new Date(this.selectedDate).toDateString()
-    );
+
+    // Then apply status filter
+    if (this.ticketStatus !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter(ticket => {
+        const showtime = new Date(ticket.seanceTime!);
+        return this.ticketStatus === 'upcoming' ?
+          showtime > now : showtime < now;
+      });
+    }
+
+    // Finally apply specific date filter if selected
+    if (this.selectedDate) {
+      filtered = filtered.filter(ticket =>
+        new Date(ticket.projectionDate!).toDateString() === new Date(this.selectedDate).toDateString()
+      );
+    }
+
+    this.filteredTickets = filtered;
   }
+
   loadUserData() {
     this.loading = true;
     this.userService.getProfile().subscribe({

@@ -155,60 +155,116 @@
 
             <!-- Tickets Tab -->
             <div *ngIf="activeTab === 'tickets'" class="space-y-6">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-gray-900">My Bookings</h2>
-                    <input type="date" [(ngModel)]="selectedDate" (change)="filterTickets()"
-                        class="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500">
+                <!-- Header with Filters -->
+                <div class="bg-white p-4 rounded-xl shadow-lg">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <h2 class="text-2xl font-bold text-gray-900">My Bookings</h2>
+
+                        <div class="flex flex-wrap gap-4">
+                            <!-- Date Range Filter -->
+                            <div class="flex bg-gray-100 rounded-lg p-1">
+                                <button *ngFor="let filter of dateFilters" (click)="setDateFilter(filter)"
+                                    [class.bg-white]="dateFilter === filter" [class.shadow-sm]="dateFilter === filter"
+                                    class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                                    {{ filter | titlecase }}
+                                </button>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div class="flex bg-gray-100 rounded-lg p-1">
+                                <button *ngFor="let status of statusFilters" (click)="setStatusFilter(status)"
+                                    [class.bg-white]="ticketStatus === status"
+                                    [class.shadow-sm]="ticketStatus === status"
+                                    class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                                    {{ status | titlecase }}
+                                </button>
+                            </div>
+
+                            <!-- Specific Date Picker -->
+                            <input type="date" [(ngModel)]="selectedDate" (change)="filterTickets()"
+                                class="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tickets Grid -->
                 <div *ngIf="filteredTickets.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div *ngFor="let ticket of filteredTickets"
-                        class="relative bg-gradient-to-br from-blue-100 to-white p-6 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                        <!-- Ticket Stub -->
-                        <div class="absolute -left-2 top-1/2 transform -translate-y-1/2 h-8 w-4 bg-gray-200 rounded-r">
+                    <div *ngFor="let ticket of filteredTickets" class="relative group">
+                        <!-- Ticket Card with Cinema Style -->
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-xl blur-xl transform group-hover:scale-105 transition-all duration-300">
                         </div>
-                        <div class="absolute -right-2 top-1/2 transform -translate-y-1/2 h-8 w-4 bg-gray-200 rounded-l">
-                        </div>
-
-                        <!-- Movie Title -->
-                        <div class="text-2xl font-bold text-blue-800 mb-4">{{ ticket.filmTitle }}</div>
-
-                        <!-- Cinema & Seat Info -->
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="space-y-1">
-                                <div class="text-gray-600">{{ ticket.cinemaName }}</div>
-                                <div class="text-lg font-semibold">Seat {{ ticket.seatNumber }}</div>
-                                <div class="text-sm">Row {{ ticket.rowNumber }} • Col {{ ticket.columnNumber }}</div>
+                        <div
+                            class="relative bg-white p-6 rounded-xl shadow-lg transform transition-all duration-300 group-hover:scale-[1.02]">
+                            <!-- Ticket Holes Pattern -->
+                            <div class="absolute left-0 top-0 h-full w-4 flex flex-col justify-around">
+                                <div class="h-3 w-3 bg-gray-100 rounded-full transform -translate-x-1/2"></div>
+                                <div class="h-3 w-3 bg-gray-100 rounded-full transform -translate-x-1/2"></div>
+                                <div class="h-3 w-3 bg-gray-100 rounded-full transform -translate-x-1/2"></div>
                             </div>
 
-                            <!-- Ticket Price -->
-                            <div class="bg-blue-800 text-white px-4 py-2 rounded-full">
-                                ${{ ticket.prix }}
-                            </div>
-                        </div>
+                            <!-- Main Content -->
+                            <div class="ml-4">
+                                <!-- Movie Title with Gradient -->
+                                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
+                                    <h3 class="text-2xl font-bold mb-2">{{ ticket.filmTitle }}</h3>
+                                </div>
 
-                        <!-- Date & Time -->
-                        <div class="flex justify-between items-center border-t border-dashed border-gray-300 pt-4 mt-4">
-                            <div>
-                                <div class="text-sm text-gray-600">Date</div>
-                                <div class="font-semibold">{{ ticket.projectionDate | date:'mediumDate' }}</div>
-                            </div>
-                            <div>
-                                <div class="text-sm text-gray-600">Time</div>
-                                <div class="font-semibold">{{ ticket.seanceTime | date:'shortTime' }}</div>
-                            </div>
-                            <div>
-                                <div class="text-sm text-gray-600">Ref</div>
-                                <div class="font-mono text-xs">{{ ticket.codePayement }}</div>
+                                <!-- Cinema & Seat Info -->
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="space-y-1">
+                                        <div class="text-gray-600 flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-sm">theater_comedy</span>
+                                            {{ ticket.cinemaName }}
+                                        </div>
+                                        <div class="text-lg font-semibold flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-sm">chair</span>
+                                            Seat {{ ticket.seatNumber }}
+                                        </div>
+                                        <div class="text-sm text-gray-500">Row {{ ticket.rowNumber }} • Col {{
+                                            ticket.columnNumber }}</div>
+                                    </div>
+
+                                    <!-- Price Tag -->
+                                    <div
+                                        class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-full font-bold">
+                                        ${{ ticket.prix }}
+                                    </div>
+                                </div>
+
+                                <!-- Date & Time with Icons -->
+                                <div
+                                    class="flex justify-between items-center border-t border-dashed border-gray-300 pt-4 mt-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-gray-500">calendar_month</span>
+                                        <div>
+                                            <div class="text-xs text-gray-500">Date</div>
+                                            <div class="font-semibold">{{ ticket.projectionDate | date:'mediumDate' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-gray-500">schedule</span>
+                                        <div>
+                                            <div class="text-xs text-gray-500">Time</div>
+                                            <div class="font-semibold">{{ ticket.seanceTime | date:'shortTime' }}</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-500">Ref</div>
+                                        <div class="font-mono text-xs">{{ ticket.codePayement }}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- No Tickets -->
-                <div *ngIf="tickets.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
-                    <p class="text-gray-600">No bookings found.</p>
+                <!-- No Tickets State -->
+                <div *ngIf="filteredTickets.length === 0" class="bg-white rounded-xl shadow-lg p-12 text-center">
+                    <span class="material-symbols-outlined text-6xl text-gray-300">movie</span>
+                    <h3 class="mt-4 text-xl font-semibold text-gray-900">No tickets found</h3>
+                    <p class="mt-2 text-gray-500">Try adjusting your filters or book a new movie!</p>
                 </div>
             </div>
         </div>
