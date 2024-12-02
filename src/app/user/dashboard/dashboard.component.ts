@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit {
   ticketStatus: StatusFilterType = 'all';
   readonly dateFilters = DATE_FILTERS;
   readonly statusFilters = STATUS_FILTERS;
+  isSpecificDateActive = false;
 
 
   constructor(
@@ -46,9 +47,25 @@ export class DashboardComponent implements OnInit {
   ) { }
   setDateFilter(filter: DateFilterType) {
     this.dateFilter = filter;
+    // Reset specific date when choosing other filters
+    if (filter !== 'all') {
+      this.selectedDate = '';
+      this.isSpecificDateActive = false;
+    }
     this.filterTickets();
   }
 
+  onSpecificDateChange(event: Event) {
+    const date = (event.target as HTMLInputElement).value;
+    if (date) {
+      // Reset other filters when specific date is selected
+      this.dateFilter = 'all';
+      this.isSpecificDateActive = true;
+    } else {
+      this.isSpecificDateActive = false;
+    }
+    this.filterTickets();
+  }
   setStatusFilter(status: StatusFilterType) {
     this.ticketStatus = status;
     this.filterTickets();
