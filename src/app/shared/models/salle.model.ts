@@ -1,5 +1,5 @@
 export interface Salle {
-    id: number;
+    id?: number;
     name: string;
     nombrePlaces: number;
     cinemaId: number;

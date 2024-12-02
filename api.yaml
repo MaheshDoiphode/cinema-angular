@@ -404,19 +404,13 @@ paths:
         '404':
           description: Cinema not found
 
-  /api/cinema/owner/{ownerEmail}:
+  /api/cinema/owner:
     get:
       summary: Get Cinemas by Owner
       tags: [Cinema]
       security:
         - BearerAuth: []
       description: Get cinemas by owner email (CINEMA_OWNER & ADMIN only)
-      parameters:
-        - name: ownerEmail
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: List of cinemas owned by user
