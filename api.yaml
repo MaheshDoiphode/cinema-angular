@@ -1348,17 +1348,11 @@ paths:
         '403':
           description: Access denied (CINEMA_OWNER role required)
 
-  /api/ticket/user/{userEmail}:
+  /api/ticket/user:
     get:
       summary: Get User's Tickets
       tags: [Tickets]
       security: []  # Public endpoint
-      parameters:
-        - name: userEmail
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: List of user's tickets
@@ -1423,16 +1417,6 @@ paths:
       tags: [Users]
       security:
         - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  example: user@example.com
       responses:
         '200':
           description: User profile details

@@ -1,0 +1,152 @@
+<app-header></app-header>
+<div class="min-h-screen bg-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="flex justify-center my-8">
+            <div role="status">
+                <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101"
+                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- ... spinner SVG ... -->
+                </svg>
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="error" class="mx-auto max-w-md mb-8">
+            <div class="flex p-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
+                <span class="material-symbols-outlined mr-2">error</span>
+                <span>{{ error }}</span>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div *ngIf="!loading && !error" class="space-y-6">
+            <!-- Tabs -->
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8">
+                    <button (click)="activeTab = 'profile'" [class.border-blue-500]="activeTab === 'profile'"
+                        [class.text-blue-600]="activeTab === 'profile'"
+                        class="border-b-2 py-4 px-1 text-sm font-medium">
+                        Profile
+                    </button>
+                    <button (click)="activeTab = 'tickets'" [class.border-blue-500]="activeTab === 'tickets'"
+                        [class.text-blue-600]="activeTab === 'tickets'"
+                        class="border-b-2 py-4 px-1 text-sm font-medium">
+                        My Tickets
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Profile Tab -->
+            <div *ngIf="activeTab === 'profile' && user" class="bg-white shadow rounded-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Profile Information</h2>
+                    <button (click)="toggleEditMode()"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                        {{ editMode ? 'Cancel' : 'Edit Profile' }}
+                    </button>
+                </div>
+
+                <!-- Profile Picture -->
+                <div class="flex justify-center mb-6">
+                    <div class="relative">
+                        <img [src]="imagePreview || (user.profile_pic ? 'data:image/jpeg;base64,' + user.profile_pic : 'assets/default-avatar.png')"
+                            [alt]="user.name"
+                            class="w-32 h-32 rounded-full object-cover border-4 border-blue-100 shadow-lg"
+                            (error)="onProfileImageError($event)">
+
+                        <!-- Edit Profile Picture Button -->
+                        <button *ngIf="editMode" (click)="triggerFileInput()"
+                            class="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2 shadow-lg hover:bg-blue-700">
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                        </button>
+
+                        <!-- Hidden File Input -->
+                        <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Profile Display -->
+                <div *ngIf="!editMode" class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500">Name</h3>
+                        <p class="mt-1 text-sm text-gray-900">{{ user.name }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500">Email</h3>
+                        <p class="mt-1 text-sm text-gray-900">{{ user.email }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500">Role</h3>
+                        <p class="mt-1 text-sm text-gray-900">{{ user.role }}</p>
+                    </div>
+                </div>
+
+                <!-- Profile Edit Form -->
+                <div *ngIf="editMode && updatedUser" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" [(ngModel)]="updatedUser.name"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" [value]="updatedUser.email" disabled
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50">
+                    </div>
+                    <button (click)="updateProfile()"
+                        class="w-full md:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tickets Tab -->
+            <div *ngIf="activeTab === 'tickets'" class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-900">My Bookings</h2>
+
+                <!-- Tickets List -->
+                <div *ngIf="tickets.length > 0" class="space-y-4">
+                    <div *ngFor="let ticket of tickets"
+                        class="bg-white shadow rounded-lg p-6 transform transition-all duration-300 hover:scale-105">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">{{ ticket.filmTitle }}</h3>
+                                <p class="text-sm text-gray-600">{{ ticket.cinemaName }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-semibold text-gray-900">Seat: {{ ticket.seatNumber }}</p>
+                                <p class="text-xs text-gray-600">
+                                    Row: {{ ticket.rowNumber }}, Col: {{ ticket.columnNumber }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 border-t pt-4">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Date:</p>
+                                    <p class="font-semibold">{{ ticket.projectionDate | date:'mediumDate' }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-600">Time:</p>
+                                    <p class="font-semibold">{{ ticket.seanceTime | date:'shortTime' }}</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-sm">
+                                <p class="text-gray-600">Booking Reference: {{ ticket.codePayement }}</p>
+                                <p class="text-gray-600">Price: ${{ ticket.prix }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Tickets -->
+                <div *ngIf="tickets.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+                    <p class="text-gray-600">No bookings found.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

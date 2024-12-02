@@ -119,139 +119,117 @@ INSERT INTO users (email, password_hash, name, role) VALUES
 ('user1@example.ca', 'user1', 'Sarah Connor', 'USER'),
 ('user2@example.ca', 'user2', 'John Smith', 'USER');
 
--- Cities
+-- Cities (Expanded)
 INSERT INTO ville (id, name, longitude, latitude, altitude) VALUES 
 (1, 'Toronto', -79.3832, 43.6532, 76),
 (2, 'Vancouver', -123.1207, 49.2827, 0),
-(3, 'Montreal', -73.5673, 45.5017, 233);
+(3, 'Montreal', -73.5673, 45.5017, 233),
+(4, 'Calgary', -114.0719, 51.0447, 1045),
+(5, 'Ottawa', -75.6972, 45.4215, 70),
+(6, 'Edmonton', -113.4938, 53.5461, 645);
 
--- Cinemas
+-- Cinemas (Multiple per city, shared owners)
 INSERT INTO cinema (id, name, owner_email, longitude, latitude, altitude, nombre_salles, ville_id, curr_status) VALUES 
+-- Toronto Cinemas
 (1, 'Scotiabank Theatre', 'owner.toronto@cinema.ca', -79.3832, 43.6532, 76, 3, 1, 'VERIFIED'),
-(2, 'Cineplex Downtown', 'owner.vancouver@cinema.ca', -123.1207, 49.2827, 0, 2, 2, 'VERIFIED'),
-(3, 'Cinema Banque Scotia', 'owner.montreal@cinema.ca', -73.5673, 45.5017, 233, 3, 3, 'VERIFIED');
+(2, 'Royal Cinema', 'owner.toronto@cinema.ca', -79.4012, 43.6555, 76, 3, 1, 'VERIFIED'),
+(3, 'TIFF Bell Lightbox', 'owner.montreal@cinema.ca', -79.3907, 43.6465, 76, 3, 1, 'VERIFIED'),
+-- Vancouver Cinemas
+(4, 'Cineplex Downtown', 'owner.vancouver@cinema.ca', -123.1207, 49.2827, 0, 3, 2, 'VERIFIED'),
+(5, 'Rio Theatre', 'owner.vancouver@cinema.ca', -123.0696, 49.2628, 0, 3, 2, 'VERIFIED'),
+(6, 'Vancity Theatre', 'owner.toronto@cinema.ca', -123.1289, 49.2780, 0, 3, 2, 'VERIFIED'),
+-- Montreal Cinemas
+(7, 'Cinema Banque Scotia', 'owner.montreal@cinema.ca', -73.5673, 45.5017, 233, 3, 3, 'VERIFIED'),
+(8, 'Cinéma Impérial', 'owner.montreal@cinema.ca', -73.5669, 45.5080, 233, 3, 3, 'VERIFIED'),
+(9, 'Cinéma du Parc', 'owner.vancouver@cinema.ca', -73.5804, 45.5102, 233, 3, 3, 'VERIFIED');
 
--- Categories
+-- Categories (Expanded)
 INSERT INTO categorie (id, name) VALUES 
 (1, 'Action'),
 (2, 'Comedy'),
 (3, 'Drama'),
-(4, 'Sci-Fi');
+(4, 'Sci-Fi'),
+(5, 'Horror'),
+(6, 'Romance'),
+(7, 'Animation'),
+(8, 'Thriller'),
+(9, 'Documentary'),
+(10, 'Adventure');
 
--- Films
+-- Films (Expanded)
 INSERT INTO film (id, titre, duree, realisateur, description, date_sortie, categorie_id) VALUES 
-(1, 'Inception', 148, 'Christopher Nolan', 'A thief who steals corporate secrets', '2010-07-16', 4),
-(2, 'The Batman', 176, 'Matt Reeves', 'Batman ventures into Gotham''s underworld', '2022-03-04', 1),
-(3, 'Barbie', 114, 'Greta Gerwig', 'Barbie and Ken''s adventures', '2023-07-21', 2),
-(4, 'Oppenheimer', 180, 'Christopher Nolan', 'Story of J. Robert Oppenheimer', '2023-07-21', 3);
+(1, 'Inception', 148, 'Christopher Nolan', 'A thief who steals corporate secrets', '2024-12-01', 4),
+(2, 'The Batman', 176, 'Matt Reeves', 'Batman ventures into Gotham''s underworld', '2024-12-01', 1),
+(3, 'Barbie', 114, 'Greta Gerwig', 'Barbie and Ken''s adventures', '2024-12-01', 2),
+(4, 'Oppenheimer', 180, 'Christopher Nolan', 'Story of J. Robert Oppenheimer', '2024-12-01', 3),
+(5, 'The Holiday Spirit', 120, 'Sarah Johnson', 'A heartwarming Christmas story', '2024-12-01', 6),
+(6, 'Space Warriors', 135, 'James Cameron', 'Epic space adventure', '2024-12-01', 4),
+(7, 'Last Laugh', 95, 'David Fisher', 'Stand-up comedian''s life story', '2024-12-01', 2),
+(8, 'Dark Waters', 142, 'Michael Bay', 'Underwater horror thriller', '2024-12-01', 5),
+(9, 'Love in Paris', 110, 'Sophie Laurent', 'Romance in the city of lights', '2024-12-01', 6),
+(10, 'The Last Dance', 160, 'Martin Scorsese', 'Epic crime drama', '2024-12-01', 3);
 
--- Salles
-INSERT INTO salle (id, name, nombre_places, cinema_id) VALUES 
-(1, 'STANDARD', 200, 1),
-(2, 'VIP', 100, 1),
-(3, 'PREMIUM', 150, 1),
-(4, 'STANDARD', 180, 2),
-(5, 'PREMIUM', 140, 2),
-(6, 'STANDARD', 160, 3),
-(7, 'VIP', 80, 3),
-(8, 'PREMIUM', 120, 3);
-
--- Modify room sizes to be more manageable
-UPDATE salle SET nombre_places = 20 WHERE id = 1; -- STANDARD (4 rows x 5 columns)
-UPDATE salle SET nombre_places = 12 WHERE id = 2; -- VIP (3 rows x 4 columns)
-UPDATE salle SET nombre_places = 15 WHERE id = 3; -- PREMIUM (3 rows x 5 columns)
-UPDATE salle SET nombre_places = 16 WHERE id = 4; -- STANDARD (4 rows x 4 columns)
-UPDATE salle SET nombre_places = 12 WHERE id = 5; -- PREMIUM (3 rows x 4 columns)
-UPDATE salle SET nombre_places = 15 WHERE id = 6; -- STANDARD (3 rows x 5 columns)
-UPDATE salle SET nombre_places = 12 WHERE id = 7; -- VIP (3 rows x 4 columns)
-UPDATE salle SET nombre_places = 15 WHERE id = 8; -- PREMIUM (3 rows x 5 columns)
-
--- Places for IMAX 1 (id: 1) - 4 rows x 5 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
+-- Standardized Salles (All cinemas have STANDARD, VIP, and PREMIUM, 4x4 layout)
+-- Clear existing salles
+DELETE FROM salle;
+-- Insert new standardized salles for each cinema
+INSERT INTO salle (id, name, nombre_places, cinema_id) 
 SELECT 
+    generate_series(1, 27),  -- 9 cinemas * 3 types = 27 salles
+    CASE (generate_series(1, 27) - 1) % 3 
+        WHEN 0 THEN 'STANDARD'
+        WHEN 1 THEN 'VIP'
+        WHEN 2 THEN 'PREMIUM'
+    END,
+    16, -- 4x4 layout for all salles
+    CEIL(generate_series(1, 27)::float / 3)::integer; -- Assigns 3 salles per cinema
+
+-- Clear existing places
+DELETE FROM place;
+
+-- Insert places for all salles (4x4 layout for each salle)
+INSERT INTO place (numero, row_number, column_number, salle_id)
+SELECT
     ROW_NUMBER() OVER () as numero,
-    ((n-1) / 5) + 1 as row_number,
-    ((n-1) % 5) + 1 as column_number,
-    1 as salle_id
-FROM generate_series(1, 20) n;
-
--- Places for VIP 1 (id: 2) - 3 rows x 4 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
-SELECT 
-    ROW_NUMBER() OVER () + 20 as numero,
-    ((n-1) / 4) + 1 as row_number,
+    ((n-1) / 4) + 1 as row_number,  -- 4 columns, so divide by 4
     ((n-1) % 4) + 1 as column_number,
-    2 as salle_id
-FROM generate_series(1, 12) n;
+    s.id as salle_id
+FROM generate_series(1, 16) n  -- 16 places per salle (4x4)
+CROSS JOIN (
+    SELECT id 
+    FROM salle 
+    ORDER BY id
+) s;
 
--- Places for Standard 1 (id: 3) - 3 rows x 5 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
+-- Seances (More times throughout Dec 2-15)
+INSERT INTO seance (id, heure_debut)
 SELECT 
-    ROW_NUMBER() OVER () + 32 as numero,
-    ((n-1) / 5) + 1 as row_number,
-    ((n-1) % 5) + 1 as column_number,
-    3 as salle_id
-FROM generate_series(1, 15) n;
+    generate_series(1, 280),
+    timestamp '2024-12-02 10:00:00' +
+    ((generate_series(1, 280) / 4)::integer * interval '1 day') +
+    ((generate_series(1, 280) % 4)::integer * interval '3 hours');
 
--- Places for ULTRA AVX (id: 4) - 4 rows x 4 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
-SELECT 
-    ROW_NUMBER() OVER () + 47 as numero,
-    ((n-1) / 4) + 1 as row_number,
-    ((n-1) % 4) + 1 as column_number,
-    4 as salle_id
-FROM generate_series(1, 16) n;
-
--- Places for Standard 1 Vancouver (id: 5) - 3 rows x 4 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
-SELECT 
-    ROW_NUMBER() OVER () + 63 as numero,
-    ((n-1) / 4) + 1 as row_number,
-    ((n-1) % 4) + 1 as column_number,
-    5 as salle_id
-FROM generate_series(1, 12) n;
-
--- Places for Salle Premium Montreal (id: 6) - 3 rows x 5 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
-SELECT 
-    ROW_NUMBER() OVER () + 75 as numero,
-    ((n-1) / 5) + 1 as row_number,
-    ((n-1) % 5) + 1 as column_number,
-    6 as salle_id
-FROM generate_series(1, 15) n;
-
--- Places for Salle VIP Montreal (id: 7) - 3 rows x 4 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
-SELECT 
-    ROW_NUMBER() OVER () + 90 as numero,
-    ((n-1) / 4) + 1 as row_number,
-    ((n-1) % 4) + 1 as column_number,
-    7 as salle_id
-FROM generate_series(1, 12) n;
-
--- Places for Salle Standard Montreal (id: 8) - 3 rows x 5 columns
-INSERT INTO place (numero, row_number, column_number, salle_id) 
-SELECT 
-    ROW_NUMBER() OVER () + 102 as numero,
-    ((n-1) / 5) + 1 as row_number,
-    ((n-1) % 5) + 1 as column_number,
-    8 as salle_id
-FROM generate_series(1, 15) n;
-
--- Seances
-INSERT INTO seance (id, heure_debut) VALUES 
-(1, '2024-12-01 14:00:00'),
-(2, '2024-12-01 17:00:00'),
-(3, '2024-12-01 20:00:00'),
-(4, '2024-12-02 22:30:00');
-
--- ProjectionFilm
-INSERT INTO projection_film (id, date_projection, prix, film_id, salle_id, seance_id) VALUES 
-(1, '2024-12-01', 15.99, 1, 1, 1),
-(2, '2024-12-01', 18.99, 2, 2, 2),
-(3, '2024-12-01', 12.99, 3, 3, 3),
-(4, '2024-12-02', 19.99, 4, 1, 4);
-
+-- Projection_Film (Multiple projections across different cinemas)
+INSERT INTO projection_film (date_projection, prix, film_id, salle_id, seance_id)
+SELECT
+    d.date,
+    CASE s.name
+        WHEN 'STANDARD' THEN 15.99
+        WHEN 'VIP' THEN 24.99
+        WHEN 'PREMIUM' THEN 19.99
+    END as prix,
+    f.id as film_id,
+    s.id as salle_id,
+    se.id as seance_id
+FROM generate_series(
+    '2024-12-02'::date,
+    '2024-12-15'::date,
+    '1 day'::interval
+) as d(date)
+CROSS JOIN (SELECT id FROM film LIMIT 10) f
+CROSS JOIN (SELECT id, name FROM salle LIMIT 27) s
+CROSS JOIN (SELECT id FROM seance LIMIT 280) se
+WHERE random() < 0.3; -- Only create some combinations, not all possible ones
 
 -- Payments
 INSERT INTO payment (id, amount, status, transaction_id, user_email, created_at, updated_at) VALUES
