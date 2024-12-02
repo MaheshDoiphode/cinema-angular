@@ -170,36 +170,39 @@ INSERT INTO film (id, titre, duree, realisateur, description, date_sortie, categ
 (10, 'The Last Dance', 160, 'Martin Scorsese', 'Epic crime drama', '2024-12-01', 3);
 
 -- Standardized Salles (All cinemas have STANDARD, VIP, and PREMIUM, 4x4 layout)
--- Clear existing salles
 DELETE FROM salle;
--- Insert new standardized salles for each cinema
-INSERT INTO salle (id, name, nombre_places, cinema_id) 
+WITH numbered_rows AS (
+  SELECT generate_series(1, 27) AS id
+)
+INSERT INTO salle (id, name, nombre_places, cinema_id)
 SELECT 
-    generate_series(1, 27),  -- 9 cinemas * 3 types = 27 salles
-    CASE (generate_series(1, 27) - 1) % 3 
+    id,
+    CASE ((id - 1) % 3)::integer 
         WHEN 0 THEN 'STANDARD'
         WHEN 1 THEN 'VIP'
         WHEN 2 THEN 'PREMIUM'
     END,
-    16, -- 4x4 layout for all salles
-    CEIL(generate_series(1, 27)::float / 3)::integer; -- Assigns 3 salles per cinema
+    16,
+    CEIL(id::float / 3)::integer
+FROM numbered_rows;
 
--- Clear existing places
+-- Clear and insert places
 DELETE FROM place;
-
--- Insert places for all salles (4x4 layout for each salle)
+WITH place_numbers AS (
+  SELECT 
+    s.id as salle_id,
+    n as place_number,
+    CEIL(n::float/4) as row_number,
+    CASE 
+      WHEN n % 4 = 0 THEN 4 
+      ELSE n % 4 
+    END as column_number
+  FROM salle s
+  CROSS JOIN generate_series(1, 16) as n
+)
 INSERT INTO place (numero, row_number, column_number, salle_id)
-SELECT
-    ROW_NUMBER() OVER () as numero,
-    ((n-1) / 4) + 1 as row_number,  -- 4 columns, so divide by 4
-    ((n-1) % 4) + 1 as column_number,
-    s.id as salle_id
-FROM generate_series(1, 16) n  -- 16 places per salle (4x4)
-CROSS JOIN (
-    SELECT id 
-    FROM salle 
-    ORDER BY id
-) s;
+SELECT place_number, row_number, column_number, salle_id
+FROM place_numbers;
 
 -- Seances (More times throughout Dec 2-15)
 INSERT INTO seance (id, heure_debut)
@@ -209,10 +212,10 @@ SELECT
     ((generate_series(1, 280) / 4)::integer * interval '1 day') +
     ((generate_series(1, 280) % 4)::integer * interval '3 hours');
 
--- Projection_Film (Multiple projections across different cinemas)
+-- Modify projection_film insertion to be more selective
 INSERT INTO projection_film (date_projection, prix, film_id, salle_id, seance_id)
-SELECT
-    d.date,
+SELECT DISTINCT
+    date_trunc('day', se.heure_debut)::date as date_projection,
     CASE s.name
         WHEN 'STANDARD' THEN 15.99
         WHEN 'VIP' THEN 24.99
@@ -221,15 +224,11 @@ SELECT
     f.id as film_id,
     s.id as salle_id,
     se.id as seance_id
-FROM generate_series(
-    '2024-12-02'::date,
-    '2024-12-15'::date,
-    '1 day'::interval
-) as d(date)
+FROM seance se
 CROSS JOIN (SELECT id FROM film LIMIT 10) f
 CROSS JOIN (SELECT id, name FROM salle LIMIT 27) s
-CROSS JOIN (SELECT id FROM seance LIMIT 280) se
-WHERE random() < 0.3; -- Only create some combinations, not all possible ones
+WHERE random() < 0.1
+LIMIT 1000;
 
 -- Payments
 INSERT INTO payment (id, amount, status, transaction_id, user_email, created_at, updated_at) VALUES
@@ -238,13 +237,25 @@ INSERT INTO payment (id, amount, status, transaction_id, user_email, created_at,
 (3, 12.99, 'COMPLETED', 'TXN_12347', 'user1@example.ca', '2024-12-01 19:15:00', '2024-12-01 19:16:00'),
 (4, 19.99, 'COMPLETED', 'TXN_12348', 'user2@example.ca', '2024-12-02 21:00:00', '2024-12-02 21:01:00');
 
-
--- Tickets
-INSERT INTO ticket (id, nom_client, prix, code_payement, reservee, user_email, place_id, projection_film_id, payment_id, created_at) VALUES 
-(1, 'Sarah Connor', 15.99, 12345, true, 'user1@example.ca', 1, 1, 1, '2024-12-01 13:45:00'),
-(2, 'John Smith', 18.99, 12346, true, 'user2@example.ca', 2, 2, 2, '2024-12-01 16:30:00'),
-(3, 'Sarah Connor', 12.99, 12347, true, 'user1@example.ca', 3, 3, 3, '2024-12-01 19:15:00'),
-(4, 'John Smith', 19.99, 12348, true, 'user2@example.ca', 4, 4, 4, '2024-12-02 21:00:00');
+-- Modify ticket insertion to use valid place IDs
+INSERT INTO ticket (nom_client, prix, code_payement, reservee, user_email, place_id, projection_film_id, payment_id, created_at)
+SELECT 
+    CASE WHEN u.email = 'user1@example.ca' THEN 'Sarah Connor' ELSE 'John Smith' END,
+    pf.prix,
+    floor(random() * 90000 + 10000)::integer,
+    true,
+    u.email,
+    p.id,
+    pf.id,
+    pay.id,
+    now()
+FROM users u
+CROSS JOIN payment pay
+CROSS JOIN projection_film pf
+CROSS JOIN place p
+WHERE u.email IN ('user1@example.ca', 'user2@example.ca')
+  AND pay.user_email = u.email
+LIMIT 4;
 
 -- Reset sequences
 SELECT setval('ville_id_seq', (SELECT MAX(id) FROM ville));
