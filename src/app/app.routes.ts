@@ -17,6 +17,7 @@ import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { CinemaOwnerDashComponent } from './user/cinema-owner-dash/cinema-owner-dash.component';
 import { EditHallsComponent } from './user/cinema-owner-dash/edit-halls/edit-halls.component';
 import { EditProjectionsComponent } from './user/cinema-owner-dash/edit-projections/edit-projections.component';
+import { AdminDashComponent } from './user/admin-dash/admin-dash.component';
 
 export const routes: Routes = [
     // Redirect empty path to login
@@ -47,6 +48,9 @@ export const routes: Routes = [
     {path: 'cinema-owner-dash', component: CinemaOwnerDashComponent},
     {path: 'edit-halls', component: EditHallsComponent},
     {path: 'edit-projections',component: EditProjectionsComponent},
+
+    // admin routes
+    {path: 'admin', component: AdminDashComponent},
 
     // Wildcard route for 404
     {path: '**', redirectTo: 'auth/login'}
