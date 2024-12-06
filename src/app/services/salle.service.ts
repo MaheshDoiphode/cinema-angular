@@ -14,6 +14,10 @@ export class SalleService {
 
   constructor(private http: HttpClient) { }
 
+  getHallsByCinema(cinemaId: number): Observable<Salle[]> {
+    return this.http.get<Salle[]>(`${environment.apiUrl}/api/cinema/${cinemaId}/salles`);
+  }
+  
   createSalle(salle: Salle): Observable<Salle> {
     return this.http.post<Salle>(this.apiUrl, salle);
   }

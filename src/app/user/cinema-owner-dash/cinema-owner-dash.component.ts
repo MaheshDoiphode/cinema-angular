@@ -9,16 +9,19 @@ import { VilleService } from '../../services/ville.service';
 import { Ville } from '../../shared/models/ville.model';
 import { AuthService } from '../../auth/auth.service';
 import { EditCinemaModalComponent } from './edit-cinema-modal/edit-cinema-modal.component';
+import { EditHallsComponent } from './edit-halls/edit-halls.component';
+import { EditProjectionsComponent } from './edit-projections/edit-projections.component';
+
 
 @Component({
   selector: 'app-cinema-owner-dash',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent, EditCinemaModalComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent, EditCinemaModalComponent, EditHallsComponent, EditProjectionsComponent],
   templateUrl: './cinema-owner-dash.component.html',
   styleUrls: ['./cinema-owner-dash.component.css']
 })
 export class CinemaOwnerDashComponent implements OnInit {
-  activeTab = 'cinemas';
+  activeTab: 'cinemas' | 'halls' | 'projections' = 'cinemas';
   cinemas: Cinema[] = [];
   loading = true;
   error = '';
@@ -38,13 +41,27 @@ export class CinemaOwnerDashComponent implements OnInit {
 
   constructor(
     private cinemaOwnerService: CinemaOwnerService,
-    private villeService: VilleService,
-    private authService: AuthService
-  ) { }
+    private villeService: VilleService  ) { }
+
   ngOnInit() {
+    this.resetState();
     this.loadCities();
     this.loadCinemas();
   }
+
+  resetState() {
+    this.error = '';
+    this.loading = false;
+    this.showAddForm = false;
+    this.showEditModal = false;
+    this.editingCinema = null;
+  }
+
+  changeTab(tab: 'cinemas' | 'halls' | 'projections') {
+    this.activeTab = tab;
+    this.resetState();
+  }
+
 
   loadCinemas() {
     this.loading = true;
@@ -59,6 +76,7 @@ export class CinemaOwnerDashComponent implements OnInit {
       }
     });
   }
+
   loadCities() {
     this.villeService.getAllCities().subscribe({
       next: (cities) => {
@@ -69,6 +87,7 @@ export class CinemaOwnerDashComponent implements OnInit {
       }
     });
   }
+
   registerCinema() {
     this.loading = true;
     this.cinemaOwnerService.registerCinema(this.newCinema).subscribe({
@@ -92,27 +111,6 @@ export class CinemaOwnerDashComponent implements OnInit {
     });
   }
 
-  updateCinema() {
-    if (!this.editingCinema?.id) return;
-
-    this.loading = true;
-    this.cinemaOwnerService.updateCinema(this.editingCinema.id, this.editingCinema).subscribe({
-      next: (cinema) => {
-        const index = this.cinemas.findIndex(c => c.id === cinema.id);
-        if (index !== -1) {
-          this.cinemas[index] = cinema;
-        }
-        this.editingCinema = null;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = 'Failed to update cinema';
-        this.loading = false;
-      }
-    });
-  }
-  
-  //------------ modal edit
   handleEditClick(cinema: Cinema) {
     this.editingCinema = cinema;
     this.showEditModal = true;

@@ -15,6 +15,9 @@ import { PaymentConfirmationComponent } from './shared/components/payment-confir
 import { TicketsComponent } from './user/tickets/tickets.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { CinemaOwnerDashComponent } from './user/cinema-owner-dash/cinema-owner-dash.component';
+import { EditHallsComponent } from './user/cinema-owner-dash/edit-halls/edit-halls.component';
+import { EditProjectionsComponent } from './user/cinema-owner-dash/edit-projections/edit-projections.component';
+
 export const routes: Routes = [
     // Redirect empty path to login
     {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -42,6 +45,8 @@ export const routes: Routes = [
 
     // Cinema owner routes
     {path: 'cinema-owner-dash', component: CinemaOwnerDashComponent},
+    {path: 'edit-halls', component: EditHallsComponent},
+    {path: 'edit-projections',component: EditProjectionsComponent},
 
     // Wildcard route for 404
     {path: '**', redirectTo: 'auth/login'}

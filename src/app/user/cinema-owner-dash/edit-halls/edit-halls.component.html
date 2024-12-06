@@ -1,0 +1,150 @@
+<!-- edit-halls.component.html -->
+<div>
+    <!-- Cinema Selection -->
+    <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Select Cinema</label>
+        <select (change)="loadHalls($event)"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <option [ngValue]="null">Select a cinema</option>
+            <option *ngFor="let cinema of cinemas" [value]="cinema.id"
+                [selected]="cinema.id === selectedCinemaId">
+                {{ cinema.name }}
+            </option>
+        </select>
+    </div>
+
+    <!-- Add Hall Button -->
+    <button *ngIf="selectedCinemaId && !showAddHallForm" (click)="showAddHallForm = true"
+        class="mb-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+        Add New Hall
+    </button>
+
+    <!-- Add Hall Form -->
+    <div *ngIf="showAddHallForm" class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Add New Hall</h3>
+            <button type="button" (click)="showAddHallForm = false" class="text-gray-400 hover:text-gray-500">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form (ngSubmit)="addHall()" #hallForm="ngForm" class="space-y-4">
+            <!-- Hall Type Selection -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Hall Type *</label>
+                <select [(ngModel)]="newHall.name" name="name" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option *ngFor="let type of hallTypes" [value]="type">{{ type }}</option>
+                </select>
+            </div>
+
+            <!-- Grid Size Selection -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Grid Size *</label>
+                <input type="number" [(ngModel)]="placeConfiguration.totalRows" name="gridSize" required min="2"
+                    max="10" (change)="updateSeatsCount($event)"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <p class="mt-1 text-sm text-gray-500">This will create a {{ placeConfiguration.totalRows }} × {{
+                    placeConfiguration.totalRows }} grid</p>
+                <p class="mt-1 text-sm text-gray-500">Total seats: {{ newHall.nombrePlaces }}</p>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button type="button" (click)="showAddHallForm = false"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button type="submit" [disabled]="!hallForm.form.valid"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300">
+                    Add Hall
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Halls List -->
+    <div *ngIf="selectedCinemaId" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div *ngFor="let hall of halls" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-semibold">{{ hall.name }}</h3>
+                <div class="flex space-x-2">
+                    <button (click)="editingHall = hall" class="p-1 text-blue-600 hover:text-blue-800">
+                        <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    <button (click)="deleteHall(hall)" class="p-1 text-red-600 hover:text-red-800">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+            </div>
+            <div class="text-sm text-gray-600">
+                <p>Total Seats: {{ hall.nombrePlaces }}</p>
+                <p>Configured Seats: {{ hall.configuredPlaces || 0 }}</p>
+            </div>
+            <button (click)="selectHall(hall)"
+                class="mt-4 w-full px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50">
+                Configure Seats
+            </button>
+        </div>
+    </div>
+
+    <!-- Seat Configuration -->
+    <div *ngIf="selectedHall" class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Configure Seats for {{ selectedHall.name }}</h3>
+            <button type="button" (click)="closePlaceConfiguration()" class="text-gray-400 hover:text-gray-500">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Configuration Form -->
+        <div class="bg-white p-8 rounded-lg shadow-lg">
+            <!-- Grid Size Input -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700">Grid Size (rows × columns) *</label>
+                <input type="number" [(ngModel)]="placeConfiguration.totalRows" min="2" max="10"
+                    (change)="updateSeatsCount($event)"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <p class="mt-1 text-sm text-gray-500">
+                    This will create a {{ placeConfiguration.totalRows }} × {{ placeConfiguration.totalRows }}
+                    grid
+                </p>
+            </div>
+
+            <!-- Configure Button -->
+            <button (click)="configurePlaces()"
+                class="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                Configure Seats
+            </button>
+
+            <!-- Screen Indicator -->
+            <div *ngIf="places.length > 0" class="mt-8">
+                <div class="w-3/4 h-4 bg-gray-300 mx-auto mb-8 rounded-lg">
+                    <p class="text-center text-sm text-gray-600 mt-2">Screen</p>
+                </div>
+
+                <!-- Seats Grid -->
+                <div class="grid gap-2 max-w-2xl mx-auto"
+                    [style.grid-template-columns]="'repeat(' + placeConfiguration.totalColumns + ', minmax(0, 1fr))'">
+                    <div *ngFor="let place of places"
+                        class="aspect-square rounded-md border-2 border-gray-300 flex flex-col items-center justify-center text-sm p-2 hover:border-blue-500 transition-all">
+                        <span class="font-medium">{{ place.numero }}</span>
+                        <span class="text-xs text-gray-500">R{{ place.rowNumber }}</span>
+                        <span class="text-xs text-gray-500">C{{ place.columnNumber }}</span>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-8 flex justify-center space-x-8">
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 border-2 border-gray-300 rounded-md mr-2"></div>
+                        <span>Configured Seat</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 bg-gray-400 rounded-md mr-2"></div>
+                        <span>Unavailable</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

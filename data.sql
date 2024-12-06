@@ -204,18 +204,17 @@ INSERT INTO place (numero, row_number, column_number, salle_id)
 SELECT place_number, row_number, column_number, salle_id
 FROM place_numbers;
 
--- Seances (More times throughout Dec 2-15)
-INSERT INTO seance (id, heure_debut)
-SELECT 
-    generate_series(1, 280),
-    timestamp '2024-12-02 10:00:00' +
-    ((generate_series(1, 280) / 4)::integer * interval '1 day') +
-    ((generate_series(1, 280) % 4)::integer * interval '3 hours');
+-- Seances -- Fixed time slots for seances (11 AM, 2 PM, 6 PM, 9 PM)
+INSERT INTO seance (id, heure_debut) VALUES 
+(1, '2024-01-01 11:00:00'),  -- Morning show
+(2, '2024-01-01 14:00:00'),  -- Afternoon show
+(3, '2024-01-01 18:00:00'),  -- Evening show
+(4, '2024-01-01 21:00:00');  -- Night show
 
 -- Modify projection_film insertion to be more selective
 INSERT INTO projection_film (date_projection, prix, film_id, salle_id, seance_id)
 SELECT DISTINCT
-    date_trunc('day', se.heure_debut)::date as date_projection,
+    date_trunc('day', CURRENT_DATE + (i || ' days')::interval)::date as date_projection,
     CASE s.name
         WHEN 'STANDARD' THEN 15.99
         WHEN 'VIP' THEN 24.99
@@ -223,11 +222,12 @@ SELECT DISTINCT
     END as prix,
     f.id as film_id,
     s.id as salle_id,
-    se.id as seance_id
-FROM seance se
+    seance.id as seance_id
+FROM generate_series(0, 14) i  -- 15 days of projections
 CROSS JOIN (SELECT id FROM film LIMIT 10) f
 CROSS JOIN (SELECT id, name FROM salle LIMIT 27) s
-WHERE random() < 0.1
+CROSS JOIN seance
+WHERE random() < 0.1  -- Control density of projections
 LIMIT 1000;
 
 -- Payments

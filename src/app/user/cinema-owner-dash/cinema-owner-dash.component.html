@@ -10,12 +10,21 @@
         <!-- Tabs -->
         <div class="border-b border-gray-200 mb-8">
             <nav class="-mb-px flex space-x-8">
-                <button
-                    [class]="activeTab === 'cinemas' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" (click)="activeTab = 'cinemas'">
+                <button [class]="activeTab === 'cinemas' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                    (click)="changeTab('cinemas')">
                     Cinemas
                 </button>
-                <!-- Add more tabs here -->
+                <button [class]="activeTab === 'halls' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                    (click)="changeTab('halls')">
+                    Halls
+                </button>
+                <button [class]="activeTab === 'projections' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                    (click)="changeTab('projections')">
+                    Projections
+                </button>
             </nav>
         </div>
 
@@ -48,7 +57,7 @@
             <!-- Add Cinema Form -->
             <div *ngIf="showAddForm" class="bg-white p-6 rounded-lg shadow-md mb-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">Register New Cinema</h3>
+                    <h3 class="text-lg font-semibold">Add New Cinema</h3> <!-- Changed from "Add New Hall" -->
                     <button type="button" (click)="showAddForm = false" class="text-gray-400 hover:text-gray-500">
                         <span class="material-symbols-outlined">close</span>
                     </button>
@@ -140,13 +149,15 @@
                 </div>
             </div>
         </div>
+        <!-- Tab 2 - Halls -->
+        <app-edit-halls *ngIf="activeTab === 'halls' && !loading" [cinemas]="cinemas">
+        </app-edit-halls>
+        <app-edit-projections *ngIf="activeTab === 'projections' && !loading" [cinemas]="cinemas">
+        </app-edit-projections>
     </div>
+    <!-- Tab 3 projections -->
+    <app-edit-cinema-modal [show]="showEditModal" [cinema]="editingCinema" [cities]="cities"
+        (closeModal)="handleModalClose()" (saveChanges)="handleSaveChanges($event)">
+    </app-edit-cinema-modal>
 </div>
-<app-edit-cinema-modal
-  [show]="showEditModal"
-  [cinema]="editingCinema"
-  [cities]="cities"
-  (closeModal)="handleModalClose()"
-  (saveChanges)="handleSaveChanges($event)">
-</app-edit-cinema-modal>
 <app-footer></app-footer>

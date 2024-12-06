@@ -1574,9 +1574,54 @@ paths:
         '404':
           description: City not found
 
+  ## Seance
+    /api/seance:
+      get:
+        summary: Get All Seances
+        tags: [Seances]
+        security: []  # Public endpoint
+        responses:
+          '200':
+            description: List of all seances
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SeanceDto'
+
+      post:
+        summary: Create New Seance
+        tags: [Seances]
+        security:
+          - BearerAuth: []
+        description: Create a new seance (CINEMA_OWNER or ADMIN only)
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeanceDto'
+        responses:
+          '201':
+            description: Seance created successfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/SeanceDto'
 
 components:
   schemas:
+    SeanceDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        heureDebut:
+          type: string
+          format: time
+          example: "11:00:00"
     TicketBookingResponseDto:
       type: object
       properties:
