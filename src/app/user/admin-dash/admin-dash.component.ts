@@ -114,15 +114,23 @@ export class AdminDashComponent implements OnInit {
     if (!film.id || !confirm('Are you sure you want to delete this film?')) return;
 
     this.loading = true;
+    this.error = '';
+    this.success = '';
+
     this.adminService.deleteFilm(film.id).subscribe({
-      next: () => {
-        this.films = this.films.filter(f => f.id !== film.id);
-        this.success = 'Film deleted successfully';
-        this.loading = false;
-        setTimeout(() => this.success = '', 3000);
+      next: (isSuccess) => {
+        if (isSuccess) {
+          this.films = this.films.filter(f => f.id !== film.id);
+          this.success = 'Film deleted successfully';
+          this.loading = false;
+          setTimeout(() => this.success = '', 3000);
+        } else {
+          this.error = 'Failed to delete film';
+          this.loading = false;
+        }
       },
-      error: () => {
-        this.error = 'Failed to delete film';
+      error: (error) => {
+        this.error = error.error?.message || 'Failed to delete film';
         this.loading = false;
       }
     });

@@ -42,21 +42,34 @@ export class LoginComponent implements OnDestroy {
           this.authService.setToken(response.jwtToken);
           this.authService.setUserType(response.role);
           this.authService.setUserName(response.username);
-          if (this.rememberMe) {
-            this.success = true;
-            this.successMessage = 'Login successful';
-            this.loading = false;
+          
+          // First time login needs city selection
+          if (!this.authService.getCityId()) {
+            this.router.navigate(['/choose-city']);
+          } else {
+            // Has city, redirect based on role
+            this.redirectBasedOnRole();
           }
-          this.router.navigate(['/choose-city']);
         },
         error: (error) => {
           this.errorMessage = error.error?.message || 'An error occurred during login';
           this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
         }
       });
+  }
+
+  private redirectBasedOnRole() {
+    const userType = this.authService.getUserType();
+    switch (userType) {
+      case 'ADMIN':
+        this.router.navigate(['/admin']);
+        break;
+      case 'CINEMA_OWNER':
+        this.router.navigate(['/cinema-owner-dash']);
+        break;
+      default:
+        this.router.navigate(['/home']);
+    }
   }
 
   ngOnDestroy() {

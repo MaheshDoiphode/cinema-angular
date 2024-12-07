@@ -1,8 +1,9 @@
-// header.component.ts
+// src/app/shared/components/header/header.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -29,7 +30,14 @@ export class HeaderComponent {
   showSearch: boolean = false;
   selectedCity: string = localStorage.getItem('selected_city_name') || 'Select City';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

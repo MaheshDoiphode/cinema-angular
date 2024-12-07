@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
 import { Cinema } from '../shared/models/cinema.model';
 import { Film } from '../shared/models/film.model';
 import { environment } from '../shared/utils/environments/environment';
@@ -22,8 +22,11 @@ export class AdminService {
     return this.http.post<EnhancedFilm>(`${this.apiUrl}/api/film`, film);
   }
 
-  deleteFilm(filmId: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/api/film/${filmId}`);
+  deleteFilm(filmId: number): Observable<boolean> {
+    return this.http.delete(`${this.apiUrl}/api/film/${filmId}`, { observe: 'response' })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status === 200)
+      );
   }
 
   getPendingCinemas(): Observable<Cinema[]> {

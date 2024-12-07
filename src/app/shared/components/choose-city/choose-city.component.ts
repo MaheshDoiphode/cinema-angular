@@ -55,12 +55,24 @@ export class ChooseCityComponent implements OnInit {
     if (selectedCity && selectedCity.id) {
       this.authService.setCityId(selectedCity.id);
       localStorage.setItem('selected_city_name', selectedCity.name);
-      const pendingFilmId = sessionStorage.getItem('pendingFilmId');
-      if (pendingFilmId) {
-        sessionStorage.removeItem('pendingFilmId');
-        this.router.navigate(['/select-cinema', pendingFilmId]);
-      } else {
-        this.router.navigate(['/home']);
+      
+      const userType = this.authService.getUserType();
+      switch (userType) {
+        case 'ADMIN':
+          this.router.navigate(['/admin']);
+          break;
+        case 'CINEMA_OWNER':
+          this.router.navigate(['/cinema-owner-dash']);
+          break;
+        default:
+          // For regular users, handle pending film navigation
+          const pendingFilmId = sessionStorage.getItem('pendingFilmId');
+          if (pendingFilmId) {
+            sessionStorage.removeItem('pendingFilmId');
+            this.router.navigate(['/select-cinema', pendingFilmId]);
+          } else {
+            this.router.navigate(['/home']);
+          }
       }
     }
   }

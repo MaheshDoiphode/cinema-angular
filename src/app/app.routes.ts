@@ -21,7 +21,7 @@ import { AdminDashComponent } from './user/admin-dash/admin-dash.component';
 
 export const routes: Routes = [
     // Redirect empty path to login
-    {path: '', redirectTo: '/home', pathMatch: 'full'},
+    // {path: '', redirectTo: '/home', pathMatch: 'full'},
     
     // Auth routes
     {path: 'auth/login', component: LoginComponent},

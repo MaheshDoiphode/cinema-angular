@@ -19,12 +19,11 @@
 
       <!-- Right Navigation -->
       <div class="flex items-center space-x-6">
-        <button (click)="navigateToCity()" 
-                class="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
+        <button (click)="navigateToCity()" class="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
           <span class="material-symbols-outlined">location_on</span>
           <span>{{ selectedCity }}</span>
         </button>
-        <a href="/dashboard" class="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
+        <a *ngIf="isLoggedIn" href="/dashboard" class="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
           <span class="material-symbols-outlined">dashboard</span>
           <span>Dashboard</span>
         </a>
